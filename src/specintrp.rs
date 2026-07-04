@@ -3,6 +3,18 @@ use numpy::PyReadonlyArray1;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
+/// Interpolate a scalar spectral field at a target longitude using precomputed Legendre values.
+///
+/// # Parameters
+/// - `rlon`: Longitude in radians at which interpolation is evaluated.
+/// - `ntrunc`: Triangular spectral truncation.
+/// - `datnm`: Packed spectral coefficients ordered by `(m, n)`.
+/// - `pnm`: Precomputed Legendre values compatible with the chosen truncation.
+///
+/// # Returns
+/// A Python result containing the interpolated scalar value.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn specintrp_impl(rlon: f32, ntrunc: i32, datnm: &[Complex32], pnm: &[f32]) -> PyResult<f32> {
     if ntrunc < 0 {
         return Err(PyValueError::new_err("ntrunc must be non-negative"));
@@ -46,6 +58,16 @@ pub fn specintrp_impl(rlon: f32, ntrunc: i32, datnm: &[Complex32], pnm: &[f32]) 
 }
 
 #[pyfunction]
+/// Python wrapper for `specintrp_impl` that validates NumPy inputs.
+///
+/// # Parameters
+/// - `rlon`: Longitude in radians at which interpolation is evaluated.
+/// - `ntrunc`: Triangular spectral truncation.
+/// - `datnm`: Packed spectral coefficients ordered by `(m, n)`.
+/// - `pnm`: Precomputed Legendre values compatible with the chosen truncation.
+///
+/// # Returns
+/// A Python result containing the interpolated scalar value.
 pub fn specintrp(
     rlon: f32,
     ntrunc: i32,

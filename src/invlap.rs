@@ -4,6 +4,18 @@ use numpy::{IntoPyArray, PyReadonlyArrayDyn, PyUntypedArrayMethods};
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
+/// Apply the inverse spherical Laplacian in packed spectral space.
+///
+/// # Parameters
+/// - `dataspec`: Packed complex spectral coefficients.
+/// - `nmdim`: Number of packed spectral coefficients per field.
+/// - `nt`: Number of stacked fields processed together.
+/// - `rsphere`: Sphere radius used to scale Laplacian operators.
+///
+/// # Returns
+/// A Python result containing the transformed packed spectral coefficients.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn invlap_impl(
     dataspec: &[Complex32],
     nmdim: usize,
@@ -52,6 +64,14 @@ pub fn invlap_impl(
 }
 
 #[pyfunction]
+/// Python wrapper for `invlap_impl` that accepts and returns NumPy complex arrays.
+///
+/// # Parameters
+/// - `dataspec`: Packed complex spectral coefficients.
+/// - `rsphere`: Sphere radius used to scale Laplacian operators.
+///
+/// # Returns
+/// A Python object containing the returned NumPy array.
 pub fn invlap<'py>(
     py: Python<'py>,
     dataspec: PyReadonlyArrayDyn<'py, Complex32>,
@@ -80,6 +100,14 @@ pub fn invlap<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `invlap_impl` that releases the GIL during computation.
+///
+/// # Parameters
+/// - `dataspec`: Packed complex spectral coefficients.
+/// - `rsphere`: Sphere radius used to scale Laplacian operators.
+///
+/// # Returns
+/// A Python object containing the returned NumPy array.
 pub fn invlap_nogil<'py>(
     py: Python<'py>,
     dataspec: PyReadonlyArrayDyn<'py, Complex32>,

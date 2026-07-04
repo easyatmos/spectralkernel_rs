@@ -332,6 +332,18 @@ fn shftreg_impl(nlon: usize, nlat: usize, greg: &[f32], wsav: &[f32]) -> PyResul
     Ok(goff)
 }
 
+/// Core Rust implementation of `sshifti`.
+///
+/// # Parameters
+/// - `ioff`: Parameter `ioff` passed through to the routine.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `lsav`: Parameter `lsav` passed through to the routine.
+///
+/// # Returns
+/// A tuple containing the workspace/result vector and the error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn sshifti_impl(ioff: i32, nlon: i32, nlat: i32, lsav: i32) -> (Vec<f32>, i32) {
     let mut ier = 1;
     if !validate_ioff(ioff) {
@@ -377,6 +389,20 @@ pub fn sshifti_impl(ioff: i32, nlon: i32, nlat: i32, lsav: i32) -> (Vec<f32>, i3
     (wsav, 0)
 }
 
+/// Core Rust implementation of `sshifte`.
+///
+/// # Parameters
+/// - `ioff`: Parameter `ioff` passed through to the routine.
+/// - `input`: Parameter `input` passed through to the routine.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `wsav`: Parameter `wsav` passed through to the routine.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn sshifte_impl(
     ioff: i32,
     input: &[f32],
@@ -424,6 +450,16 @@ pub fn sshifte_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `sshifti`.
+///
+/// # Parameters
+/// - `ioff`: Parameter `ioff` passed through to the routine.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `lsav`: Parameter `lsav` passed through to the routine.
+///
+/// # Returns
+/// A one-dimensional NumPy workspace array together with a error code.
 pub fn sshifti<'py>(
     py: Python<'py>,
     ioff: i32,
@@ -437,6 +473,16 @@ pub fn sshifti<'py>(
 
 #[pyfunction]
 #[pyo3(signature = (data, wsav, lwork, ioff=0))]
+/// Rust entry point for `sshifte`.
+///
+/// # Parameters
+/// - `data`: Rank-2 real array analyzed by the internal Fourier kernel.
+/// - `wsav`: Parameter `wsav` passed through to the routine.
+/// - `lwork`: Length of the caller-provided work array.
+/// - `ioff`: Parameter `ioff` passed through to the routine.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn sshifte<'py>(
     py: Python<'py>,
     data: PyReadonlyArrayDyn<'py, f32>,

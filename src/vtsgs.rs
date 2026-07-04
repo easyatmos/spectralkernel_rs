@@ -54,6 +54,23 @@ fn expand_vtsgs_output(
     full
 }
 
+/// Core Rust implementation of `vtsgs`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvts`: Parameter `wvts` passed through to the routine.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vtsgs_impl(
     br: &[f32],
     bi: &[f32],
@@ -443,6 +460,18 @@ pub fn vtsgs_impl(
     Ok((vt, wt, idv, nlon, 0))
 }
 
+/// Core Rust implementation of `vtsgsi`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lwvts`: Parameter `lwvts` passed through to the routine.
+/// - `ldwork`: Length of the auxiliary workspace expected by the low-level interface.
+///
+/// # Returns
+/// A tuple containing the workspace/result vector and the error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vtsgsi_impl(nlat: i32, nlon: i32, lwvts: i32, ldwork: i32) -> (Vec<f32>, i32) {
     let mut ierror = 1;
     if nlat < 3 {
@@ -476,6 +505,16 @@ pub fn vtsgsi_impl(nlat: i32, nlon: i32, lwvts: i32, ldwork: i32) -> (Vec<f32>, 
 }
 
 #[pyfunction]
+/// Rust entry point for `vtsgsi`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lwvts`: Parameter `lwvts` passed through to the routine.
+/// - `ldwork`: Length of the auxiliary workspace expected by the low-level interface.
+///
+/// # Returns
+/// A one-dimensional NumPy workspace array together with a error code.
 pub fn vtsgsi<'py>(
     py: Python<'py>,
     nlat: i32,
@@ -488,6 +527,18 @@ pub fn vtsgsi<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `vtsgs`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `wvts`: Parameter `wvts` passed through to the routine.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vtsgs<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,
@@ -556,6 +607,19 @@ pub fn vtsgs<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `vtsgs_ityp`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvts`: Parameter `wvts` passed through to the routine.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vtsgs_ityp<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,

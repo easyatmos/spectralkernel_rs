@@ -64,6 +64,21 @@ fn ityp_from_isym(isym: usize) -> PyResult<usize> {
     }
 }
 
+/// Core Rust implementation of `gradgc`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn gradgc_impl(
     a: &[f32],
     b: &[f32],
@@ -144,6 +159,16 @@ pub fn gradgc_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `gradgc`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn gradgc<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,
@@ -199,6 +224,17 @@ pub fn gradgc<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `gradgc_isym`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn gradgc_isym<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,

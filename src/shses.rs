@@ -16,6 +16,20 @@ fn infer_nlon_from_wshses(nlat: usize, ltotal: usize) -> Option<usize> {
     None
 }
 
+/// Synthesize scalar fields on a regular grid using stored Legendre tables.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshses`: Workspace initialized by `shsesi_impl` for regular-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shses_impl(
     a: &[f32],
     b: &[f32],
@@ -224,6 +238,20 @@ pub fn shses_impl(
     Ok((g, 0))
 }
 
+/// Parallel implementation of `shses_impl`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshses`: Workspace initialized by `shsesi_impl` for regular-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shses_impl_parallel(
     a: &[f32],
     b: &[f32],
@@ -412,6 +440,16 @@ pub fn shses_impl_parallel(
 }
 
 #[pyfunction]
+/// Python wrapper for `shses_impl` that returns NumPy arrays.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wshses`: Workspace initialized by `shsesi_impl` for regular-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn shses<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,

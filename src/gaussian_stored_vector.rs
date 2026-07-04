@@ -551,6 +551,16 @@ fn vbwb_core(nlat: usize, weighted: bool) -> Result<(Vec<f32>, Vec<f32>), i32> {
     Ok((vb, wb))
 }
 
+/// Build the core workspace used by `vhagsi`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// `Ok` with the workspace vector, or `Err` with a error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhagsi_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     if nlat < 3 {
         return Err(1);
@@ -565,6 +575,16 @@ pub fn vhagsi_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     Ok(out)
 }
 
+/// Build the core workspace used by `vhsgsi`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// `Ok` with the workspace vector, or `Err` with a error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhsgsi_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     if nlat < 3 {
         return Err(1);
@@ -579,6 +599,16 @@ pub fn vhsgsi_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     Ok(out)
 }
 
+/// Build the core workspace used by `vtsgsi`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// `Ok` with the workspace vector, or `Err` with a error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vtsgsi_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     if nlat < 3 {
         return Err(1);

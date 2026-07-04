@@ -42,6 +42,22 @@ fn collect_logical_vw(view: ndarray::ArrayViewD<'_, f32>) -> Vec<f32> {
     }
 }
 
+/// Analyze vector fields on a Gaussian grid using stored Legendre tables.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhags`: Workspace initialized by `vhagsi_impl` for Gaussian-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhags_impl(
     v: &[f32],
     w: &[f32],
@@ -385,6 +401,22 @@ pub fn vhags_impl(
     Ok((br, bi, cr, ci, 0))
 }
 
+/// Parallel implementation of `vhags_impl`.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhags`: Workspace initialized by `vhagsi_impl` for Gaussian-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhags_impl_parallel(
     v: &[f32],
     w: &[f32],
@@ -438,6 +470,20 @@ pub fn vhags_impl_parallel(
     Ok((br, bi, cr, ci, 0))
 }
 
+/// Rust entry point for `vhags_impl_latpar`.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhags`: Workspace initialized by `vhagsi_impl` for Gaussian-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn vhags_impl_latpar(
     v: &[f32],
     w: &[f32],
@@ -816,6 +862,16 @@ fn build_vhags_outputs<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhags_impl` using the default vector layout.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `wvhags`: Workspace initialized by `vhagsi_impl` for Gaussian-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhags<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,
@@ -852,6 +908,16 @@ pub fn vhags<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhags_impl` that releases the GIL during analysis.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `wvhags`: Workspace initialized by `vhagsi_impl` for Gaussian-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhags_nogil<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,
@@ -887,6 +953,16 @@ pub fn vhags_nogil<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for the latitude-parallel `vhags_impl` path that releases the GIL.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `wvhags`: Workspace initialized by `vhagsi_impl` for Gaussian-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhags_latpar_nogil<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,
@@ -922,6 +998,17 @@ pub fn vhags_latpar_nogil<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhags_impl` with an explicit `ityp` selector.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhags`: Workspace initialized by `vhagsi_impl` for Gaussian-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhags_ityp<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,

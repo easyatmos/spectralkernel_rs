@@ -261,6 +261,18 @@ fn vhftreg_impl(nlon: usize, nlat: usize, reg: &[f32], wsav: &[f32]) -> PyResult
     Ok(off)
 }
 
+/// Core Rust implementation of `vshifti`.
+///
+/// # Parameters
+/// - `ioff`: Parameter `ioff` passed through to the routine.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `lsav`: Parameter `lsav` passed through to the routine.
+///
+/// # Returns
+/// A tuple containing the workspace/result vector and the error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vshifti_impl(ioff: i32, nlon: i32, nlat: i32, lsav: i32) -> (Vec<f32>, i32) {
     let mut ier = 1;
     if !validate_ioff(ioff) {
@@ -306,6 +318,21 @@ pub fn vshifti_impl(ioff: i32, nlon: i32, nlat: i32, lsav: i32) -> (Vec<f32>, i3
     (wsav, 0)
 }
 
+/// Core Rust implementation of `vshifte`.
+///
+/// # Parameters
+/// - `ioff`: Parameter `ioff` passed through to the routine.
+/// - `u_input`: Parameter `u_input` passed through to the routine.
+/// - `v_input`: Parameter `v_input` passed through to the routine.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `wsav`: Parameter `wsav` passed through to the routine.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vshifte_impl(
     ioff: i32,
     u_input: &[f32],
@@ -362,6 +389,16 @@ pub fn vshifte_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `vshifti`.
+///
+/// # Parameters
+/// - `ioff`: Parameter `ioff` passed through to the routine.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `lsav`: Parameter `lsav` passed through to the routine.
+///
+/// # Returns
+/// A one-dimensional NumPy workspace array together with a error code.
 pub fn vshifti<'py>(
     py: Python<'py>,
     ioff: i32,
@@ -375,6 +412,17 @@ pub fn vshifti<'py>(
 
 #[pyfunction]
 #[pyo3(signature = (u, v, wsav, lwork, ioff=0))]
+/// Rust entry point for `vshifte`.
+///
+/// # Parameters
+/// - `u`: Zonal or first vector component on the operator grid.
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `wsav`: Parameter `wsav` passed through to the routine.
+/// - `lwork`: Length of the caller-provided work array.
+/// - `ioff`: Parameter `ioff` passed through to the routine.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vshifte<'py>(
     py: Python<'py>,
     u: PyReadonlyArrayDyn<'py, f32>,

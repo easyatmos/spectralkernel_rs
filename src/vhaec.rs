@@ -62,6 +62,22 @@ fn build_vhaec_outputs(
     ))
 }
 
+/// Analyze vector fields on a regular grid using computed Legendre tables.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhaec`: Workspace initialized by `vhaeci_impl` for regular-grid vector analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhaec_impl(
     v: &[f32],
     w: &[f32],
@@ -455,6 +471,22 @@ pub fn vhaec_impl(
     Ok((br, bi, cr, ci, 0))
 }
 
+/// Parallel analysis of vector fields on a regular grid using computed Legendre tables.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhaec`: Workspace initialized by `vhaeci_impl` for regular-grid vector analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhaec_impl_parallel(
     v: &[f32],
     w: &[f32],
@@ -874,6 +906,16 @@ pub fn vhaec_impl_parallel(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhaec_impl` using the default vector layout.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `wvhaec`: Workspace initialized by `vhaeci_impl` for regular-grid vector analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhaec<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,
@@ -910,6 +952,16 @@ pub fn vhaec<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhaec_impl_parallel` that releases the GIL during analysis.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `wvhaec`: Workspace initialized by `vhaeci_impl` for regular-grid vector analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhaec_nogil<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,
@@ -945,6 +997,17 @@ pub fn vhaec_nogil<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhaec_impl` with an explicit `ityp` selector.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhaec`: Workspace initialized by `vhaeci_impl` for regular-grid vector analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhaec_ityp<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,

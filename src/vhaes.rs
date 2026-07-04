@@ -27,6 +27,22 @@ fn latitude_ranges(limit: usize) -> Vec<(usize, usize)> {
     ranges
 }
 
+/// Analyze vector fields on a regular grid using stored Legendre tables.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhaes`: Workspace initialized by `vhaesi_impl` for regular-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhaes_impl(
     v: &[f32],
     w: &[f32],
@@ -352,6 +368,16 @@ fn build_vhaes_outputs<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhaes_impl` using the default vector layout.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `wvhaes`: Workspace initialized by `vhaesi_impl` for regular-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhaes<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,
@@ -388,6 +414,16 @@ pub fn vhaes<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhaes_impl` that releases the GIL during analysis.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `wvhaes`: Workspace initialized by `vhaesi_impl` for regular-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhaes_nogil<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,
@@ -422,6 +458,16 @@ pub fn vhaes_nogil<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for the latitude-parallel `vhaes_impl` path that releases the GIL.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `wvhaes`: Workspace initialized by `vhaesi_impl` for regular-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhaes_latpar_nogil<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,
@@ -456,6 +502,17 @@ pub fn vhaes_latpar_nogil<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhaes_impl` with an explicit `ityp` selector.
+///
+/// # Parameters
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhaes`: Workspace initialized by `vhaesi_impl` for regular-grid vector analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn vhaes_ityp<'py>(
     py: Python<'py>,
     v: PyReadonlyArrayDyn<'py, f32>,

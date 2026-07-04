@@ -1,5 +1,13 @@
 use crate::sphcom_scalar::dnlfk;
 
+/// Rust entry point for `dvbk`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn dvbk(m: i32, n: i32) -> Vec<f64> {
     let len = usize::try_from(n.max(0) / 2 + 2).unwrap_or(0);
     let mut cv = vec![0.0_f64; len];
@@ -46,6 +54,14 @@ pub fn dvbk(m: i32, n: i32) -> Vec<f64> {
     cv
 }
 
+/// Rust entry point for `dvtk`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn dvtk(m: i32, n: i32) -> Vec<f64> {
     let len = usize::try_from(n.max(0) / 2 + 2).unwrap_or(0);
     let mut cv = vec![0.0_f64; len];
@@ -88,6 +104,14 @@ pub fn dvtk(m: i32, n: i32) -> Vec<f64> {
     cv
 }
 
+/// Rust entry point for `dwbk`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn dwbk(m: i32, n: i32) -> Vec<f64> {
     let len = usize::try_from(n.max(0) / 2 + 2).unwrap_or(0);
     let mut cw = vec![0.0_f64; len];
@@ -141,6 +165,14 @@ pub fn dwbk(m: i32, n: i32) -> Vec<f64> {
     cw
 }
 
+/// Rust entry point for `dwtk`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn dwtk(m: i32, n: i32) -> Vec<f64> {
     let len = usize::try_from(n.max(0) / 2 + 2).unwrap_or(0);
     let mut cw = vec![0.0_f64; len];
@@ -214,6 +246,16 @@ pub fn dwtk(m: i32, n: i32) -> Vec<f64> {
     cw
 }
 
+/// Rust entry point for `dvbt`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `theta`: Colatitude in radians.
+/// - `cv`: Fourier coefficients of the vector v basis.
+///
+/// # Returns
+/// The evaluated basis value.
 pub fn dvbt(m: i32, n: i32, theta: f64, cv: &[f64]) -> f64 {
     if n == 0 {
         return 0.0_f64;
@@ -267,6 +309,16 @@ pub fn dvbt(m: i32, n: i32, theta: f64, cv: &[f64]) -> f64 {
     vh
 }
 
+/// Rust entry point for `dvtt`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `theta`: Colatitude in radians.
+/// - `cv`: Fourier coefficients of the vector v basis.
+///
+/// # Returns
+/// The evaluated basis value.
 pub fn dvtt(m: i32, n: i32, theta: f64, cv: &[f64]) -> f64 {
     if n == 0 {
         return 0.0_f64;
@@ -320,6 +372,16 @@ pub fn dvtt(m: i32, n: i32, theta: f64, cv: &[f64]) -> f64 {
     vh
 }
 
+/// Rust entry point for `dwbt`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `theta`: Colatitude in radians.
+/// - `cw`: Fourier coefficients of the vector w basis.
+///
+/// # Returns
+/// The evaluated basis value.
 pub fn dwbt(m: i32, n: i32, theta: f64, cw: &[f64]) -> f64 {
     if n <= 0 || m <= 0 {
         return 0.0_f64;
@@ -374,6 +436,16 @@ pub fn dwbt(m: i32, n: i32, theta: f64, cw: &[f64]) -> f64 {
     wh
 }
 
+/// Rust entry point for `dwtt`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `theta`: Colatitude in radians.
+/// - `cw`: Fourier coefficients of the vector w basis.
+///
+/// # Returns
+/// The evaluated basis value.
 pub fn dwtt(m: i32, n: i32, theta: f64, cw: &[f64]) -> f64 {
     if n <= 0 || m <= 0 {
         return 0.0_f64;
@@ -429,6 +501,15 @@ pub fn dwtt(m: i32, n: i32, theta: f64, cw: &[f64]) -> f64 {
     wh
 }
 
+/// Rust entry point for `dzvk`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn dzvk(nlat: i32, m: i32, n: i32) -> Vec<f64> {
     let lc = usize::try_from((nlat + 1) / 2).unwrap_or(0);
     let mut czv = vec![0.0_f64; lc + 1];
@@ -499,6 +580,17 @@ pub fn dzvk(nlat: i32, m: i32, n: i32) -> Vec<f64> {
     czv
 }
 
+/// Rust entry point for `dzvt`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `th`: Colatitude in radians.
+/// - `czv`: Precomputed Gaussian v-basis coefficients.
+///
+/// # Returns
+/// The evaluated basis value.
 pub fn dzvt(nlat: i32, m: i32, n: i32, th: f64, czv: &[f64]) -> f64 {
     if n <= 0 {
         return 0.0_f64;
@@ -590,6 +682,15 @@ pub fn dzvt(nlat: i32, m: i32, n: i32, th: f64, czv: &[f64]) -> f64 {
     zvh
 }
 
+/// Rust entry point for `dzwk`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn dzwk(nlat: i32, m: i32, n: i32) -> Vec<f64> {
     let lc = usize::try_from((nlat + 1) / 2).unwrap_or(0);
     let mut czw = vec![0.0_f64; lc + 1];
@@ -661,6 +762,17 @@ pub fn dzwk(nlat: i32, m: i32, n: i32) -> Vec<f64> {
     czw
 }
 
+/// Rust entry point for `dzwt`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `th`: Colatitude in radians.
+/// - `czw`: Precomputed Gaussian w-basis coefficients.
+///
+/// # Returns
+/// The evaluated basis value.
 pub fn dzwt(nlat: i32, m: i32, n: i32, th: f64, czw: &[f64]) -> f64 {
     if n <= 0 {
         return 0.0_f64;
@@ -756,6 +868,14 @@ pub fn dzwt(nlat: i32, m: i32, n: i32, th: f64, czw: &[f64]) -> f64 {
     zwh
 }
 
+/// Rust entry point for `rabcv1`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// Three double-precision recurrence or workspace tables.
 pub fn rabcv1(nlat: usize, nlon: usize) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
     let mmax = nlat.min((nlon + 1) / 2);
     let labc = (mmax.saturating_sub(2) * (nlat + nlat - mmax - 1)) / 2;
@@ -807,6 +927,14 @@ pub fn rabcv1(nlat: usize, nlon: usize) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
     (a, b, c)
 }
 
+/// Rust entry point for `rabcw1`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// Three double-precision recurrence or workspace tables.
 pub fn rabcw1(nlat: usize, nlon: usize) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
     let mmax = nlat.min((nlon + 1) / 2);
     let labc = (mmax.saturating_sub(2) * (nlat + nlat - mmax - 1)) / 2;
@@ -881,6 +1009,16 @@ fn pack_init_tables(
     out
 }
 
+/// Core Rust implementation of `zvinit`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn zvinit_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let lim = imid * nlat;
@@ -918,6 +1056,16 @@ pub fn zvinit_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     pack_init_tables(&base0, &base1, &a, &b, &c, lim)
 }
 
+/// Core Rust implementation of `zwinit`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn zwinit_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let lim = imid * nlat;
@@ -960,6 +1108,16 @@ pub fn zwinit_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     pack_init_tables(&base0, &base1, &a, &b, &c, lim)
 }
 
+/// Core Rust implementation of `vbinit`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vbinit_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let lim = imid * nlat;
@@ -991,6 +1149,16 @@ pub fn vbinit_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     pack_init_tables(&base0, &base1, &a, &b, &c, lim)
 }
 
+/// Core Rust implementation of `wbinit`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn wbinit_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let lim = imid * nlat;
@@ -1026,6 +1194,17 @@ pub fn wbinit_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     pack_init_tables(&base0, &base1, &a, &b, &c, lim)
 }
 
+/// Rust entry point for `zvin_column`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `wzvin`: Computed vector analysis workspace for the v basis.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn zvin_column(nlat: usize, nlon: usize, ityp: i32, m: usize, wzvin: &[f64]) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let lim = nlat * imid;
@@ -1121,6 +1300,17 @@ pub fn zvin_column(nlat: usize, nlon: usize, ityp: i32, m: usize, wzvin: &[f64])
     out
 }
 
+/// Rust entry point for `zwin_column`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `wzwin`: Computed vector analysis workspace for the w basis.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn zwin_column(nlat: usize, nlon: usize, ityp: i32, m: usize, wzwin: &[f64]) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let lim = nlat * imid;

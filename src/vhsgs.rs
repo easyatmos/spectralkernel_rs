@@ -62,6 +62,23 @@ fn infer_nlon_from_wvhsgs(nlat: usize, wvhsgs: &[f32]) -> Option<(usize, usize, 
     fallback
 }
 
+/// Synthesize vector fields on a Gaussian grid using stored Legendre tables.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhsgs`: Workspace initialized by `vhsgsi_impl` for Gaussian-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhsgs_impl(
     br: &[f32],
     bi: &[f32],
@@ -485,6 +502,18 @@ fn expand_vhsgs_output(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhsgs_impl` using the default vector layout.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `wvhsgs`: Workspace initialized by `vhsgsi_impl` for Gaussian-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vhsgs<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,
@@ -562,6 +591,19 @@ pub fn vhsgs<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhsgs_impl` with an explicit `ityp` selector.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhsgs`: Workspace initialized by `vhsgsi_impl` for Gaussian-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vhsgs_ityp<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,

@@ -131,6 +131,18 @@ fn hrfftf_impl_with_mode(
     Ok(())
 }
 
+/// Core Rust implementation of `hrfftf`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `r`: Parameter `r` passed through to the routine.
+/// - `whrfft`: Parameter `whrfft` passed through to the routine.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn hrfftf_impl(m: usize, n: usize, r: &mut [f32], whrfft: &[f32]) -> PyResult<()> {
     hrfftf_impl_with_mode(m, n, r, whrfft, HrfftfMode::Auto)
 }
@@ -216,6 +228,16 @@ fn hrfftf_with_mode_py<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `hrfftf_reference_only`.
+///
+/// # Parameters
+/// - `r`: Parameter `r` passed through to the routine.
+/// - `whrfft`: Parameter `whrfft` passed through to the routine.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A one-dimensional NumPy array containing the computed workspace.
 pub fn hrfftf_reference_only<'py>(
     py: Python<'py>,
     r: PyReadonlyArrayDyn<'py, f32>,
@@ -227,6 +249,16 @@ pub fn hrfftf_reference_only<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `hrfftf_kernel_only`.
+///
+/// # Parameters
+/// - `r`: Parameter `r` passed through to the routine.
+/// - `whrfft`: Parameter `whrfft` passed through to the routine.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A one-dimensional NumPy array containing the computed workspace.
 pub fn hrfftf_kernel_only<'py>(
     py: Python<'py>,
     r: PyReadonlyArrayDyn<'py, f32>,
@@ -238,6 +270,16 @@ pub fn hrfftf_kernel_only<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `hrfftf`.
+///
+/// # Parameters
+/// - `r`: Parameter `r` passed through to the routine.
+/// - `whrfft`: Parameter `whrfft` passed through to the routine.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A one-dimensional NumPy array containing the computed workspace.
 pub fn hrfftf<'py>(
     py: Python<'py>,
     r: PyReadonlyArrayDyn<'py, f32>,

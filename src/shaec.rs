@@ -5,6 +5,20 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
+/// Analyze scalar fields on a regular grid using computed Legendre tables.
+///
+/// # Parameters
+/// - `g`: Input scalar grid values stored in `(nlat, nlon[, nt])` order.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshaec`: Workspace initialized by `shaeci_impl` for regular-grid scalar analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shaec_impl(
     g: &[f32],
     nlat: usize,
@@ -208,6 +222,20 @@ pub fn shaec_impl(
     Ok((a, b, 0))
 }
 
+/// Parallel implementation of `shaec_impl`.
+///
+/// # Parameters
+/// - `g`: Input scalar grid values stored in `(nlat, nlon[, nt])` order.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshaec`: Workspace initialized by `shaeci_impl` for regular-grid scalar analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shaec_impl_parallel(
     g: &[f32],
     nlat: usize,
@@ -252,6 +280,15 @@ pub fn shaec_impl_parallel(
 }
 
 #[pyfunction]
+/// Python wrapper for `shaec_impl` that accepts rank-2 or rank-3 NumPy arrays.
+///
+/// # Parameters
+/// - `g`: Input scalar grid values stored in `(nlat, nlon[, nt])` order.
+/// - `wshaec`: Workspace initialized by `shaeci_impl` for regular-grid scalar analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn shaec<'py>(
     py: Python<'py>,
     g: PyReadonlyArrayDyn<'py, f32>,

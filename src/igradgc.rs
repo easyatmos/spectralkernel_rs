@@ -72,6 +72,21 @@ fn crop_half_sphere_output(
     out
 }
 
+/// Core Rust implementation of `igradgc`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn igradgc_impl(
     br: &[f32],
     bi: &[f32],
@@ -134,6 +149,16 @@ pub fn igradgc_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `igradgc`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn igradgc<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,
@@ -173,6 +198,17 @@ pub fn igradgc<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `igradgc_isym`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn igradgc_isym<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,

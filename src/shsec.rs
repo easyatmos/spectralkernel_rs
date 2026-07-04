@@ -52,6 +52,21 @@ fn build_shsec_output(
     Ok((garr.into_pyarray(py).into_any().unbind(), ierror))
 }
 
+/// Synthesize scalar fields on a regular grid using computed Legendre tables.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shsec_impl(
     a: &[f32],
     b: &[f32],
@@ -273,6 +288,21 @@ pub fn shsec_impl(
     Ok((g, 0))
 }
 
+/// Parallel synthesis of scalar fields on a regular grid using computed Legendre tables.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shsec_impl_parallel(
     a: &[f32],
     b: &[f32],
@@ -540,6 +570,16 @@ pub fn shsec_impl_parallel(
 }
 
 #[pyfunction]
+/// Python wrapper for `shsec_impl` that returns NumPy arrays.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn shsec<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,
@@ -577,6 +617,16 @@ pub fn shsec<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `shsec_impl_parallel` that releases the GIL during synthesis.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn shsec_nogil<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,

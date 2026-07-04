@@ -256,6 +256,20 @@ fn advec_impl(
 
 #[pyfunction]
 #[pyo3(signature = (nlat, nlon, t, alpha, beta, omega, hzero, re))]
+/// Rust entry point for `advec_gpot`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `t`: Parameter `t` passed through to the routine.
+/// - `alpha`: Parameter `alpha` passed through to the routine.
+/// - `beta`: Parameter `beta` passed through to the routine.
+/// - `omega`: Planetary rotation rate.
+/// - `hzero`: Parameter `hzero` passed through to the routine.
+/// - `re`: Parameter `re` passed through to the routine.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn advec_gpot<'py>(
     py: Python<'py>,
     nlat: usize,
@@ -282,6 +296,16 @@ pub fn advec_gpot<'py>(
 
 #[pyfunction]
 #[pyo3(signature = (nlat=23, nlon=45, dt=600.0, ntime=None))]
+/// Rust entry point for `advec`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `dt`: Parameter `dt` passed through to the routine.
+/// - `ntime`: Parameter `ntime` passed through to the routine.
+///
+/// # Returns
+/// A Python result containing two NumPy arrays.
 pub fn advec<'py>(
     py: Python<'py>,
     nlat: usize,

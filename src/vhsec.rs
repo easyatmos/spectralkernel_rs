@@ -4,6 +4,23 @@ use numpy::{IntoPyArray, PyReadonlyArrayDyn, PyUntypedArrayMethods};
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
+/// Synthesize vector fields on a regular grid using computed Legendre tables.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhsec_impl(
     br: &[f32],
     bi: &[f32],
@@ -485,6 +502,18 @@ pub fn vhsec_impl(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhsec_impl` using the default vector layout.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vhsec<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,
@@ -540,6 +569,19 @@ pub fn vhsec<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhsec_impl` with an explicit `ityp` selector.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vhsec_ityp<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,

@@ -1,3 +1,11 @@
+/// Rust entry point for `dnlfk`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn dnlfk(m: i32, n: i32) -> Vec<f64> {
     let n_usize = usize::try_from(n.max(0)).unwrap_or(0);
     let mut cp = vec![0.0_f64; (n_usize / 2) + 2];
@@ -105,6 +113,16 @@ pub fn dnlfk(m: i32, n: i32) -> Vec<f64> {
     }
 }
 
+/// Rust entry point for `dnlft`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `theta`: Colatitude in radians.
+/// - `cp`: Fourier coefficients of the scalar Legendre basis.
+///
+/// # Returns
+/// The evaluated basis value.
 pub fn dnlft(m: i32, n: i32, theta: f64, cp: &[f64]) -> f64 {
     let cdt = (theta + theta).cos();
     let sdt = (theta + theta).sin();
@@ -163,6 +181,14 @@ pub fn dnlft(m: i32, n: i32, theta: f64, cp: &[f64]) -> f64 {
     pb
 }
 
+/// Rust entry point for `rabcp1`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// Three double-precision recurrence or workspace tables.
 pub fn rabcp1(nlat: usize, nlon: usize) -> (Vec<f64>, Vec<f64>, Vec<f64>) {
     let mmax = nlat.min(nlon / 2 + 1);
     let labc = ((mmax.saturating_sub(2)) * (nlat + nlat - mmax - 1)) / 2;

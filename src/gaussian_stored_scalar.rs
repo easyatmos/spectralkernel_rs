@@ -31,6 +31,16 @@ fn idx_pmn(nlat: usize, m: usize, np1: usize) -> usize {
     m * (2 * nlat - m - 1) / 2 + np1
 }
 
+/// Core Rust implementation of `shagsp`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// `Ok` with the workspace vector, or `Err` with a error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shagsp_impl(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     if nlat < 3 {
         return Err(1);
@@ -110,6 +120,17 @@ pub fn shagsp_impl(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     Ok(out)
 }
 
+/// Core Rust implementation of `shagss1`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector in storage.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shagss1_impl(nlat: usize, nlon: usize, w: &[f32]) -> Vec<f32> {
     let l = scalar_l(nlat, nlon);
     let late = scalar_late(nlat);
@@ -198,6 +219,16 @@ pub fn shagss1_impl(nlat: usize, nlon: usize, w: &[f32]) -> Vec<f32> {
     pmnf
 }
 
+/// Build the core workspace used by `shagsi`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// `Ok` with the workspace vector, or `Err` with a error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shagsi_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     let mut out = shagsp_impl(nlat, nlon)?;
     let pmnf = shagss1_impl(nlat, nlon, &out);

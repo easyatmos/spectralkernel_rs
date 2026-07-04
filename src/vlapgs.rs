@@ -55,6 +55,24 @@ fn expand_vlapgs_output(
     full
 }
 
+/// Core Rust implementation of `vlapgs`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhsgs`: Workspace initialized by `vhsgsi_impl` for Gaussian-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vlapgs_impl(
     nlon: usize,
     br: &[f32],
@@ -197,6 +215,19 @@ pub fn vlapgs_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `vlapgs`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `wvhsgs`: Workspace initialized by `vhsgsi_impl` for Gaussian-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vlapgs<'py>(
     py: Python<'py>,
     nlon: usize,
@@ -260,6 +291,20 @@ pub fn vlapgs<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `vlapgs_ityp`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhsgs`: Workspace initialized by `vhsgsi_impl` for Gaussian-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vlapgs_ityp<'py>(
     py: Python<'py>,
     nlon: usize,

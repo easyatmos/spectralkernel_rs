@@ -33,6 +33,22 @@ fn collect_logical_ab(view: ndarray::ArrayViewD<'_, f32>) -> Vec<f32> {
     }
 }
 
+/// Core Rust implementation of `divec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn divec_impl(
     nlon: usize,
     br: &[f32],
@@ -119,6 +135,18 @@ pub fn divec_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `divec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+/// - `isym`: Symmetry selector used by Legendre tables.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn divec<'py>(
     py: Python<'py>,
     nlon: usize,

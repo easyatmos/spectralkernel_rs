@@ -33,6 +33,22 @@ fn collect_logical_ab(view: ndarray::ArrayViewD<'_, f32>) -> Vec<f32> {
     }
 }
 
+/// Core Rust implementation of `slapgc`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn slapgc_impl(
     nlon: usize,
     a: &[f32],
@@ -126,6 +142,18 @@ pub fn slapgc_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `slapgc`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+/// - `isym`: Symmetry selector used by Legendre tables.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn slapgc<'py>(
     py: Python<'py>,
     nlon: usize,

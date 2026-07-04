@@ -1,3 +1,16 @@
+/// Compute one of the stored Legendre initialization tables selected by the requested mode.
+///
+/// # Parameters
+/// - `mode`: Selector controlling which stored Legendre recurrence table is generated.
+/// - `l`: Leading degree or table width used by the selected recurrence branch.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `w`: Input workspace or secondary component, depending on the routine.
+/// - `pmn`: Output buffer that receives the generated Legendre values.
+/// - `km_state`: Mutable state tuple updated with the recurrence bookkeeping indices.
+///
+/// # Returns
+/// The computed index, table length, or updated state position returned by the routine.
 pub fn legin_compute(
     mode: usize,
     l: usize,

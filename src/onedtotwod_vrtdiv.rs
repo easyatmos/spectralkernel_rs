@@ -5,6 +5,20 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
+/// Expand packed vorticity and divergence spectra into separate coefficient planes.
+///
+/// # Parameters
+/// - `vrtspec`: Packed vorticity spectral coefficients.
+/// - `divspec`: Packed divergence spectral coefficients.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nmdim`: Number of packed spectral coefficients per field.
+/// - `nt`: Number of stacked fields processed together.
+/// - `rsphere`: Sphere radius used to scale Laplacian operators.
+///
+/// # Returns
+/// A Python result containing four coefficient arrays in vector layout.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn onedtotwod_vrtdiv_impl(
     vrtspec: &[Complex32],
     divspec: &[Complex32],
@@ -61,6 +75,16 @@ pub fn onedtotwod_vrtdiv_impl(
 }
 
 #[pyfunction]
+/// Python wrapper for `onedtotwod_vrtdiv_impl` that returns NumPy arrays.
+///
+/// # Parameters
+/// - `vrtspec`: Packed vorticity spectral coefficients.
+/// - `divspec`: Packed divergence spectral coefficients.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `rsphere`: Sphere radius used to scale Laplacian operators.
+///
+/// # Returns
+/// Four NumPy arrays containing the returned coefficient families.
 pub fn onedtotwod_vrtdiv<'py>(
     py: Python<'py>,
     vrtspec: PyReadonlyArrayDyn<'py, Complex32>,

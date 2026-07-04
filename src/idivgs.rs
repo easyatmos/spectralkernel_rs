@@ -61,6 +61,21 @@ fn ityp_from_isym(isym: usize) -> PyResult<usize> {
     }
 }
 
+/// Core Rust implementation of `idivgs`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsgs`: Workspace initialized by `vhsgsi_impl` for Gaussian-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn idivgs_impl(
     a: &[f32],
     b: &[f32],
@@ -154,6 +169,16 @@ pub fn idivgs_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `idivgs`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wvhsgs`: Workspace initialized by `vhsgsi_impl` for Gaussian-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn idivgs<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,
@@ -209,6 +234,17 @@ pub fn idivgs<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `idivgs_isym`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsgs`: Workspace initialized by `vhsgsi_impl` for Gaussian-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn idivgs_isym<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,

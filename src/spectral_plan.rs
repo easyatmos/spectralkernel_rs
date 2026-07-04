@@ -1,4 +1,4 @@
-use crate::grid::{gaussian_latitudes_weights, longitudes, regular_latitudes, GridType};
+use crate::grid::{GridType, gaussian_latitudes_weights, longitudes, regular_latitudes};
 use crate::shaeci::shaeci_impl;
 use crate::shaesi::shaesi_impl;
 use crate::shagci::shagci_impl;
@@ -29,6 +29,13 @@ pub enum LegFunc {
 }
 
 impl LegFunc {
+    /// Rust entry point for `parse`.
+    ///
+    /// # Parameters
+    /// - `value`: Parameter `value` passed through to the routine.
+    ///
+    /// # Returns
+    /// A Python result containing the values produced by this routine.
     pub fn parse(value: &str) -> PyResult<Self> {
         match value {
             "stored" => Ok(Self::Stored),
@@ -39,6 +46,10 @@ impl LegFunc {
         }
     }
 
+    /// Rust entry point for `as_str`.
+    ///
+    /// # Returns
+    /// The value produced by this routine.
     pub fn as_str(self) -> &'static str {
         match self {
             Self::Stored => "stored",
@@ -48,6 +59,10 @@ impl LegFunc {
 }
 
 #[derive(Clone)]
+/// Rust entry point for `SpectralPlan`.
+///
+/// The object owns a SpectralPlan so repeated operations reuse cached
+/// initialization data instead of rebuilding work arrays for every transform.
 pub struct SpectralPlan {
     pub nlat: usize,
     pub nlon: usize,
@@ -65,6 +80,18 @@ pub struct SpectralPlan {
 }
 
 impl SpectralPlan {
+    /// Create a high-level operator set for an equally spaced global latitude-longitude grid.
+    ///
+    /// # Parameters
+    /// - `nlat`: Number of latitudes in the grid.
+    /// - `nlon`: Number of longitudes in the grid.
+    /// - `radius`: Sphere radius used to scale gradients, Laplacians, and dynamics.
+    /// - `legfunc`: Legendre-function strategy: stored tables or computed recurrences.
+    ///
+    /// # Returns
+    /// A Python result containing the values produced by this routine.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn regular(nlat: usize, nlon: usize, radius: f32, legfunc: LegFunc) -> PyResult<Self> {
         validate_grid(nlat, nlon, radius)?;
         let n1 = if nlon % 2 == 1 {
@@ -194,6 +221,18 @@ impl SpectralPlan {
         })
     }
 
+    /// Create a high-level operator set for a Gaussian latitude-longitude grid.
+    ///
+    /// # Parameters
+    /// - `nlat`: Number of latitudes in the grid.
+    /// - `nlon`: Number of longitudes in the grid.
+    /// - `radius`: Sphere radius used to scale gradients, Laplacians, and dynamics.
+    /// - `legfunc`: Legendre-function strategy: stored tables or computed recurrences.
+    ///
+    /// # Returns
+    /// A Python result containing the values produced by this routine.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn gaussian(nlat: usize, nlon: usize, radius: f32, legfunc: LegFunc) -> PyResult<Self> {
         validate_grid(nlat, nlon, radius)?;
         let n1 = nlat.min((nlon + 2) / 2);

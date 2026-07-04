@@ -4,6 +4,24 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
+/// Synthesize vector fields on a regular grid using stored Legendre tables.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhses`: Workspace initialized by `vhsesi_impl` for regular-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhses_impl(
     br: &[f32],
     bi: &[f32],
@@ -471,6 +489,18 @@ fn infer_nlon_from_wvhses(nlat: usize, ltotal: usize) -> Option<usize> {
 }
 
 #[pyfunction]
+/// Python wrapper for `vhses_impl` using the default vector layout.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `wvhses`: Workspace initialized by `vhsesi_impl` for regular-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vhses<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,
@@ -555,6 +585,19 @@ pub fn vhses<'py>(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhses_impl` with an explicit `ityp` selector.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvhses`: Workspace initialized by `vhsesi_impl` for regular-grid vector synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vhses_ityp<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,

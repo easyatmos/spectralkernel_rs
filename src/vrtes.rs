@@ -33,6 +33,22 @@ fn collect_logical_ab(view: ndarray::ArrayViewD<'_, f32>) -> Vec<f32> {
     }
 }
 
+/// Core Rust implementation of `vrtes`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshses`: Workspace initialized by `shsesi_impl` for regular-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vrtes_impl(
     nlon: usize,
     cr: &[f32],
@@ -113,6 +129,18 @@ pub fn vrtes_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `vrtes`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `wshses`: Workspace initialized by `shsesi_impl` for regular-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+/// - `isym`: Symmetry selector used by Legendre tables.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn vrtes<'py>(
     py: Python<'py>,
     nlon: usize,

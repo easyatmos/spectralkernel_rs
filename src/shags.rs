@@ -19,6 +19,20 @@ fn infer_nlon_from_wshags(nlat: usize, ltotal: usize) -> Option<(usize, usize, u
     None
 }
 
+/// Analyze scalar fields on a Gaussian grid using stored Legendre tables.
+///
+/// # Parameters
+/// - `g`: Input scalar grid values stored in `(nlat, nlon[, nt])` order.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshags`: Workspace initialized by `shagsi_impl` for Gaussian-grid scalar analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shags_impl(
     g: &[f32],
     nlat: usize,
@@ -202,6 +216,15 @@ pub fn shags_impl(
 }
 
 #[pyfunction]
+/// Python wrapper for `shags_impl` that accepts rank-2 or rank-3 NumPy arrays.
+///
+/// # Parameters
+/// - `g`: Input scalar grid values stored in `(nlat, nlon[, nt])` order.
+/// - `wshags`: Workspace initialized by `shagsi_impl` for Gaussian-grid scalar analysis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn shags<'py>(
     py: Python<'py>,
     g: PyReadonlyArrayDyn<'py, f32>,

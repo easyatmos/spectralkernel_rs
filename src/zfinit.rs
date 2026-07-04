@@ -2,6 +2,16 @@ use crate::sphcom_scalar::{dnlfk, rabcp1};
 use numpy::PyArray1;
 use pyo3::prelude::*;
 
+/// Core Rust implementation of `zfinit`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A pair of double-precision work tables.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn zfinit_impl(nlat: usize, nlon: usize) -> (Vec<f64>, Vec<f64>) {
     let imid = (nlat + 1) / 2;
     let mut z = vec![0.0_f64; imid * nlat * 2];
@@ -47,6 +57,17 @@ pub fn zfinit_impl(nlat: usize, nlon: usize) -> (Vec<f64>, Vec<f64>) {
     (wzfin, abc)
 }
 
+/// Rust entry point for `zfin_column`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `wzfin`: Computed scalar analysis workspace produced by `zfinit_impl`.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn zfin_column(nlat: usize, nlon: usize, isym: i32, m: usize, wzfin: &[f64]) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let lim = nlat * imid;
@@ -144,6 +165,14 @@ pub fn zfin_column(nlat: usize, nlon: usize, isym: i32, m: usize, wzfin: &[f64])
 }
 
 #[pyfunction]
+/// Python helper that exposes the scalar analysis workspace built by `zfinit_impl` for inspection.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn zfinit_debug<'py>(
     py: Python<'py>,
     nlat: usize,

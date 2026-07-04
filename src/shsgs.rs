@@ -18,6 +18,20 @@ fn infer_nlon_from_wshsgs(nlat: usize, ltotal: usize) -> Option<(usize, usize, u
     None
 }
 
+/// Synthesize scalar fields on a Gaussian grid using stored Legendre tables.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsgs`: Workspace initialized by `shsgsi_impl` for Gaussian-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shsgs_impl(
     a: &[f32],
     b: &[f32],
@@ -183,6 +197,16 @@ pub fn shsgs_impl(
 }
 
 #[pyfunction]
+/// Python wrapper for `shsgs_impl` that returns NumPy arrays.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wshsgs`: Workspace initialized by `shsgsi_impl` for Gaussian-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn shsgs<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,

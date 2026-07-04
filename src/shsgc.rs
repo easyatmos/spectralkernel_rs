@@ -20,6 +20,20 @@ fn infer_nlon_from_wshsgc(nlat: usize, ltotal: usize) -> Option<(usize, usize, u
     None
 }
 
+/// Synthesize scalar fields on a Gaussian grid using computed Legendre tables.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shsgc_impl(
     a: &[f32],
     b: &[f32],
@@ -180,6 +194,20 @@ pub fn shsgc_impl(
     Ok((g, 0))
 }
 
+/// Parallel implementation of `shsgc_impl`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shsgc_impl_parallel(
     a: &[f32],
     b: &[f32],
@@ -340,6 +368,16 @@ pub fn shsgc_impl_parallel(
 }
 
 #[pyfunction]
+/// Python wrapper for `shsgc_impl` that returns NumPy arrays.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn shsgc<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,

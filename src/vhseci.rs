@@ -3,6 +3,18 @@ use crate::sphcom_vector::{vbinit_impl, wbinit_impl};
 use numpy::PyArray1;
 use pyo3::prelude::*;
 
+/// Initialize the workspace required by `vhsec_impl`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lvhsec`: Declared length of the `wvhsec` workspace.
+/// - `ldwork`: Length of the auxiliary workspace expected by the low-level interface.
+///
+/// # Returns
+/// A tuple containing the workspace/result vector and the error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhseci_impl(nlat: i32, nlon: i32, lvhsec: i32, ldwork: i32) -> (Vec<f32>, i32) {
     let mut ierror = 1;
     if nlat < 3 {
@@ -58,6 +70,16 @@ pub fn vhseci_impl(nlat: i32, nlon: i32, lvhsec: i32, ldwork: i32) -> (Vec<f32>,
 }
 
 #[pyfunction]
+/// Python wrapper for `vhseci_impl` that returns the initialized workspace.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lvhsec`: Declared length of the `wvhsec` workspace.
+/// - `ldwork`: Length of the auxiliary workspace expected by the low-level interface.
+///
+/// # Returns
+/// A one-dimensional NumPy workspace array together with a error code.
 pub fn vhseci<'py>(
     py: Python<'py>,
     nlat: i32,

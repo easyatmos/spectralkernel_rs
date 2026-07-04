@@ -4,6 +4,18 @@ use numpy::{IntoPyArray, PyReadonlyArray1, PyReadonlyArrayDyn, PyUntypedArrayMet
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
+/// Multiply spectral coefficients by the supplied smoothing factors.
+///
+/// # Parameters
+/// - `dataspec`: Packed complex spectral coefficients.
+/// - `smooth`: Per-coefficient smoothing factors applied in spectral space.
+/// - `nmdim`: Number of packed spectral coefficients per field.
+/// - `nt`: Number of stacked fields processed together.
+///
+/// # Returns
+/// A Python result containing the transformed packed spectral coefficients.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn multsmoothfact_impl(
     dataspec: &[Complex32],
     smooth: &[f32],
@@ -48,6 +60,14 @@ pub fn multsmoothfact_impl(
 }
 
 #[pyfunction]
+/// Python wrapper for `multsmoothfact_impl` that accepts NumPy complex arrays.
+///
+/// # Parameters
+/// - `dataspec`: Packed complex spectral coefficients.
+/// - `smooth`: Per-coefficient smoothing factors applied in spectral space.
+///
+/// # Returns
+/// A Python object containing the returned NumPy array.
 pub fn multsmoothfact<'py>(
     py: Python<'py>,
     dataspec: PyReadonlyArrayDyn<'py, Complex32>,

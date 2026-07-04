@@ -47,6 +47,20 @@ fn infer_nlon_from_wshsec(nlat: usize, ltotal: usize) -> PyResult<usize> {
     ))
 }
 
+/// Core Rust implementation of `vrtec`.
+///
+/// # Parameters
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vrtec_impl(
     cr: &[f32],
     ci: &[f32],
@@ -107,6 +121,16 @@ pub fn vrtec_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `vrtec`.
+///
+/// # Parameters
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn vrtec<'py>(
     py: Python<'py>,
     cr: PyReadonlyArrayDyn<'py, f32>,

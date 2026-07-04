@@ -58,6 +58,23 @@ fn ityp_from_isym(isym: usize) -> PyResult<usize> {
     }
 }
 
+/// Core Rust implementation of `idvtgc`.
+///
+/// # Parameters
+/// - `ad`: Parameter `ad` passed through to the routine.
+/// - `bd`: Parameter `bd` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn idvtgc_impl(
     ad: &[f32],
     bd: &[f32],
@@ -153,6 +170,18 @@ pub fn idvtgc_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `idvtgc`.
+///
+/// # Parameters
+/// - `ad`: Parameter `ad` passed through to the routine.
+/// - `bd`: Parameter `bd` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn idvtgc<'py>(
     py: Python<'py>,
     ad: PyReadonlyArrayDyn<'py, f32>,
@@ -166,6 +195,19 @@ pub fn idvtgc<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `idvtgc_isym`.
+///
+/// # Parameters
+/// - `ad`: Parameter `ad` passed through to the routine.
+/// - `bd`: Parameter `bd` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn idvtgc_isym<'py>(
     py: Python<'py>,
     ad: PyReadonlyArrayDyn<'py, f32>,

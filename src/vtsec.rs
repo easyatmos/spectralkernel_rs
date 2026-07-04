@@ -33,6 +33,18 @@ fn equidistant_theta(nlat: usize) -> Vec<f64> {
     (0..imid).map(|i| (i as f64) * dt).collect()
 }
 
+/// Core Rust implementation of `vtseci`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lwvts`: Parameter `lwvts` passed through to the routine.
+/// - `ldwork`: Length of the auxiliary workspace expected by the low-level interface.
+///
+/// # Returns
+/// A tuple containing the workspace/result vector and the error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vtseci_impl(nlat: i32, nlon: i32, lwvts: i32, ldwork: i32) -> (Vec<f32>, i32) {
     let mut ierror = 1;
     if nlat < 3 {
@@ -65,6 +77,16 @@ pub fn vtseci_impl(nlat: i32, nlon: i32, lwvts: i32, ldwork: i32) -> (Vec<f32>, 
 }
 
 #[pyfunction]
+/// Rust entry point for `vtseci`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lwvts`: Parameter `lwvts` passed through to the routine.
+/// - `ldwork`: Length of the auxiliary workspace expected by the low-level interface.
+///
+/// # Returns
+/// A one-dimensional NumPy workspace array together with a error code.
 pub fn vtseci<'py>(
     py: Python<'py>,
     nlat: i32,
@@ -77,6 +99,18 @@ pub fn vtseci<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `vtsec`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `wvts`: Parameter `wvts` passed through to the routine.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vtsec<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,
@@ -146,6 +180,19 @@ pub fn vtsec<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `vtsec_ityp`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `ityp`: Vector storage selector controlling the coefficient families in use.
+/// - `wvts`: Parameter `wvts` passed through to the routine.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn vtsec_ityp<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,

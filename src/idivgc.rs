@@ -58,6 +58,21 @@ fn ityp_from_isym(isym: usize) -> PyResult<usize> {
     }
 }
 
+/// Core Rust implementation of `idivgc`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn idivgc_impl(
     a: &[f32],
     b: &[f32],
@@ -142,6 +157,16 @@ pub fn idivgc_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `idivgc`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn idivgc<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,
@@ -196,6 +221,17 @@ pub fn idivgc<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `idivgc_isym`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn idivgc_isym<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,

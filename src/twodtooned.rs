@@ -5,6 +5,19 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
+/// Pack a two-dimensional spectral coefficient layout into the triangular one-dimensional representation.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `ntrunc`: Triangular spectral truncation.
+/// - `nt`: Number of stacked fields processed together.
+///
+/// # Returns
+/// A Python result containing the transformed packed spectral coefficients.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn twodtooned_impl(
     a: &[f32],
     b: &[f32],
@@ -57,6 +70,15 @@ pub fn twodtooned_impl(
 }
 
 #[pyfunction]
+/// Python wrapper for `twodtooned_impl` that returns packed NumPy arrays.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `ntrunc`: Triangular spectral truncation.
+///
+/// # Returns
+/// A Python object containing the returned NumPy array.
 pub fn twodtooned<'py>(
     py: Python<'py>,
     a: PyReadonlyArrayDyn<'py, f32>,

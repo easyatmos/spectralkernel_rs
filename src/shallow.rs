@@ -473,6 +473,14 @@ fn shallow_impl(
 
 #[pyfunction]
 #[pyo3(signature = (nlat=65, nlon=128))]
+/// Rust entry point for `shallow_initial`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn shallow_initial<'py>(
     py: Python<'py>,
     nlat: usize,
@@ -499,6 +507,17 @@ pub fn shallow_initial<'py>(
 
 #[pyfunction]
 #[pyo3(signature = (nlat=65, nlon=128, mmode=42, itmax=720, dt=600.0))]
+/// Rust entry point for `shallow`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `mmode`: Parameter `mmode` passed through to the routine.
+/// - `itmax`: Parameter `itmax` passed through to the routine.
+/// - `dt`: Parameter `dt` passed through to the routine.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn shallow<'py>(
     py: Python<'py>,
     nlat: usize,

@@ -19,6 +19,18 @@ fn math_index(nlon: usize, i: usize, j: usize) -> usize {
     i * nlon + j
 }
 
+/// Core Rust implementation of `geo2maths`.
+///
+/// # Parameters
+/// - `ig`: Parameter `ig` passed through to the routine.
+/// - `sg`: Parameter `sg` passed through to the routine.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nlat`: Number of latitudes in the grid.
+///
+/// # Returns
+/// A Python result containing the computed values as a contiguous vector.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn geo2maths_impl(ig: i32, sg: &[f32], nlon: usize, nlat: usize) -> PyResult<Vec<f32>> {
     validate_ig(ig)?;
     if sg.len() != nlon * nlat {
@@ -37,6 +49,18 @@ pub fn geo2maths_impl(ig: i32, sg: &[f32], nlon: usize, nlat: usize) -> PyResult
     Ok(sm)
 }
 
+/// Core Rust implementation of `math2geos`.
+///
+/// # Parameters
+/// - `ig`: Parameter `ig` passed through to the routine.
+/// - `sm`: Parameter `sm` passed through to the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A Python result containing the computed values as a contiguous vector.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn math2geos_impl(ig: i32, sm: &[f32], nlat: usize, nlon: usize) -> PyResult<Vec<f32>> {
     validate_ig(ig)?;
     if sm.len() != nlat * nlon {
@@ -55,6 +79,19 @@ pub fn math2geos_impl(ig: i32, sm: &[f32], nlat: usize, nlon: usize) -> PyResult
     Ok(sg)
 }
 
+/// Core Rust implementation of `geo2mathv`.
+///
+/// # Parameters
+/// - `ig`: Parameter `ig` passed through to the routine.
+/// - `ug`: Parameter `ug` passed through to the routine.
+/// - `vg`: Parameter `vg` passed through to the routine.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nlat`: Number of latitudes in the grid.
+///
+/// # Returns
+/// A Python result containing the cosine and sine coefficient arrays.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn geo2mathv_impl(
     ig: i32,
     ug: &[f32],
@@ -81,6 +118,19 @@ pub fn geo2mathv_impl(
     Ok((vm, wm))
 }
 
+/// Core Rust implementation of `math2geov`.
+///
+/// # Parameters
+/// - `ig`: Parameter `ig` passed through to the routine.
+/// - `vm`: Parameter `vm` passed through to the routine.
+/// - `wm`: Parameter `wm` passed through to the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A Python result containing the cosine and sine coefficient arrays.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn math2geov_impl(
     ig: i32,
     vm: &[f32],
@@ -109,6 +159,14 @@ pub fn math2geov_impl(
 
 #[pyfunction]
 #[pyo3(signature = (sg, ig=0))]
+/// Rust entry point for `geo2maths`.
+///
+/// # Parameters
+/// - `sg`: Parameter `sg` passed through to the routine.
+/// - `ig`: Parameter `ig` passed through to the routine.
+///
+/// # Returns
+/// A Python object containing the returned NumPy array.
 pub fn geo2maths<'py>(
     py: Python<'py>,
     sg: PyReadonlyArrayDyn<'py, f32>,
@@ -136,6 +194,14 @@ pub fn geo2maths<'py>(
 
 #[pyfunction]
 #[pyo3(signature = (sm, ig=0))]
+/// Rust entry point for `math2geos`.
+///
+/// # Parameters
+/// - `sm`: Parameter `sm` passed through to the routine.
+/// - `ig`: Parameter `ig` passed through to the routine.
+///
+/// # Returns
+/// A Python object containing the returned NumPy array.
 pub fn math2geos<'py>(
     py: Python<'py>,
     sm: PyReadonlyArrayDyn<'py, f32>,
@@ -163,6 +229,15 @@ pub fn math2geos<'py>(
 
 #[pyfunction]
 #[pyo3(signature = (ug, vg, ig=0))]
+/// Rust entry point for `geo2mathv`.
+///
+/// # Parameters
+/// - `ug`: Parameter `ug` passed through to the routine.
+/// - `vg`: Parameter `vg` passed through to the routine.
+/// - `ig`: Parameter `ig` passed through to the routine.
+///
+/// # Returns
+/// Two NumPy arrays containing the returned coefficient fields.
 pub fn geo2mathv<'py>(
     py: Python<'py>,
     ug: PyReadonlyArrayDyn<'py, f32>,
@@ -208,6 +283,15 @@ pub fn geo2mathv<'py>(
 
 #[pyfunction]
 #[pyo3(signature = (vm, wm, ig=0))]
+/// Rust entry point for `math2geov`.
+///
+/// # Parameters
+/// - `vm`: Parameter `vm` passed through to the routine.
+/// - `wm`: Parameter `wm` passed through to the routine.
+/// - `ig`: Parameter `ig` passed through to the routine.
+///
+/// # Returns
+/// Two NumPy arrays containing the returned coefficient fields.
 pub fn math2geov<'py>(
     py: Python<'py>,
     vm: PyReadonlyArrayDyn<'py, f32>,

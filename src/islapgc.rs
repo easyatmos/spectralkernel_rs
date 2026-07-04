@@ -33,6 +33,23 @@ fn collect_logical_ab(view: ndarray::ArrayViewD<'_, f32>) -> Vec<f32> {
     }
 }
 
+/// Core Rust implementation of `islapgc`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn islapgc_impl(
     nlon: usize,
     xlmbda: &[f32],
@@ -155,6 +172,18 @@ pub fn islapgc_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `islapgc`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn islapgc<'py>(
     py: Python<'py>,
     nlon: usize,
@@ -220,6 +249,19 @@ pub fn islapgc<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `islapgc_isym`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn islapgc_isym<'py>(
     py: Python<'py>,
     nlon: usize,

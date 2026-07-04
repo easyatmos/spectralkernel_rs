@@ -64,6 +64,24 @@ fn expand_isfvpec_output(
     full
 }
 
+/// Core Rust implementation of `isfvpec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `as_`: Parameter `as_` passed through to the routine.
+/// - `bs`: Parameter `bs` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn isfvpec_impl(
     nlon: usize,
     as_: &[f32],
@@ -163,6 +181,19 @@ pub fn isfvpec_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `isfvpec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `as_`: Parameter `as_` passed through to the routine.
+/// - `bs`: Parameter `bs` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn isfvpec<'py>(
     py: Python<'py>,
     nlon: usize,
@@ -177,6 +208,20 @@ pub fn isfvpec<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `isfvpec_isym`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `as_`: Parameter `as_` passed through to the routine.
+/// - `bs`: Parameter `bs` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn isfvpec_isym<'py>(
     py: Python<'py>,
     nlon: usize,

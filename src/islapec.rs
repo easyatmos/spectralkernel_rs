@@ -33,6 +33,23 @@ fn collect_logical_ab(view: ndarray::ArrayViewD<'_, f32>) -> Vec<f32> {
     }
 }
 
+/// Core Rust implementation of `islapec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn islapec_impl(
     nlon: usize,
     xlmbda: &[f32],
@@ -150,6 +167,18 @@ pub fn islapec_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `islapec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn islapec<'py>(
     py: Python<'py>,
     nlon: usize,
@@ -214,6 +243,19 @@ pub fn islapec<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `islapec_isym`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn islapec_isym<'py>(
     py: Python<'py>,
     nlon: usize,

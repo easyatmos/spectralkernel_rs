@@ -73,6 +73,17 @@ fn hrfftb_auto_should_fallback(n: usize, nf: usize) -> bool {
     false
 }
 
+/// Rust entry point for `hrfftb_impl_with_mode`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `r`: Parameter `r` passed through to the routine.
+/// - `whrfft`: Parameter `whrfft` passed through to the routine.
+/// - `mode`: Selector controlling which stored Legendre recurrence table is generated.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn hrfftb_impl_with_mode(
     m: usize,
     n: usize,
@@ -117,15 +128,49 @@ pub fn hrfftb_impl_with_mode(
     }
 }
 
+/// Core Rust implementation of `hrfftb`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `r`: Parameter `r` passed through to the routine.
+/// - `_whrfft`: Parameter `_whrfft` passed through to the routine.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn hrfftb_impl(m: usize, n: usize, r: &mut [f32], _whrfft: &[f32]) -> PyResult<()> {
     hrfftb_impl_with_mode(m, n, r, _whrfft, HrfftbMode::Auto)
 }
 
+/// Core Rust implementation of `hrfftb_kernel_only`.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+/// - `r`: Parameter `r` passed through to the routine.
+/// - `whrfft`: Parameter `whrfft` passed through to the routine.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn hrfftb_kernel_only_impl(m: usize, n: usize, r: &mut [f32], whrfft: &[f32]) -> PyResult<()> {
     hrfftb_impl_with_mode(m, n, r, whrfft, HrfftbMode::KernelOnly)
 }
 
 #[pyfunction]
+/// Rust entry point for `hrfftb`.
+///
+/// # Parameters
+/// - `r`: Parameter `r` passed through to the routine.
+/// - `whrfft`: Parameter `whrfft` passed through to the routine.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A one-dimensional NumPy array containing the computed workspace.
 pub fn hrfftb<'py>(
     py: Python<'py>,
     r: PyReadonlyArrayDyn<'py, f32>,
@@ -177,6 +222,16 @@ pub fn hrfftb<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `hrfftb_kernel_only`.
+///
+/// # Parameters
+/// - `r`: Parameter `r` passed through to the routine.
+/// - `whrfft`: Parameter `whrfft` passed through to the routine.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A one-dimensional NumPy array containing the computed workspace.
 pub fn hrfftb_kernel_only<'py>(
     py: Python<'py>,
     r: PyReadonlyArrayDyn<'py, f32>,
@@ -188,6 +243,16 @@ pub fn hrfftb_kernel_only<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `hrfftb_reference_only`.
+///
+/// # Parameters
+/// - `r`: Parameter `r` passed through to the routine.
+/// - `whrfft`: Parameter `whrfft` passed through to the routine.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A one-dimensional NumPy array containing the computed workspace.
 pub fn hrfftb_reference_only<'py>(
     py: Python<'py>,
     r: PyReadonlyArrayDyn<'py, f32>,

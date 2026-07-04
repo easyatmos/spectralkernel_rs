@@ -7,6 +7,17 @@ use numpy::IntoPyArray;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
+/// Core Rust implementation of `helmsph`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn helmsph_impl(nlat: usize, nlon: usize, xlmbda: f32) -> PyResult<(Vec<f32>, f32, f32, i32)> {
     if nlat < 3 {
         return Ok((Vec::new(), 0.0, 0.0, 1));
@@ -89,6 +100,15 @@ pub fn helmsph_impl(nlat: usize, nlon: usize, xlmbda: f32) -> PyResult<(Vec<f32>
 }
 
 #[pyfunction]
+/// Solve the scalar Helmholtz equation on the sphere using the spectral plan.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn helmsph<'py>(
     py: Python<'py>,
     nlat: usize,

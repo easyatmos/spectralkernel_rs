@@ -1,11 +1,24 @@
 use crate::invlap::invlap_impl;
-use crate::ops::{kinetic_energy_vec, vec_to_py, SphereOps};
+use crate::ops::{SphereOps, kinetic_energy_vec, vec_to_py};
 use numpy::{PyReadonlyArrayDyn, PyUntypedArrayMethods};
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
 #[pyfunction]
 #[pyo3(signature = (ops, q, u, v, form="advective"))]
+/// Compute scalar-advection tendency for transport equations on the sphere.
+///
+/// # Parameters
+/// - `ops`: High-level SphereOps spectral operator set used for transforms and differential operators.
+/// - `q`: Scalar tracer field on the operator grid.
+/// - `u`: Zonal or first vector component on the operator grid.
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `form`: Equation form selector for the high-level tendency routine.
+///
+/// # Returns
+/// A Python object containing the returned NumPy array.
+///
+/// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
 pub fn scalar_advection_rhs<'py>(
     py: Python<'py>,
     ops: PyRef<'py, SphereOps>,
@@ -42,7 +55,7 @@ pub fn scalar_advection_rhs<'py>(
         _ => {
             return Err(PyValueError::new_err(
                 "form must be 'advective', 'conservative', or 'split'",
-            ))
+            ));
         }
     };
     for value in &mut tendency {
@@ -58,6 +71,18 @@ pub fn scalar_advection_rhs<'py>(
 
 #[pyfunction]
 #[pyo3(signature = (ops, zeta, omega=7.292115e-5_f32, form="advective"))]
+/// Compute the barotropic-vorticity tendency from relative vorticity.
+///
+/// # Parameters
+/// - `ops`: High-level SphereOps spectral operator set used for transforms and differential operators.
+/// - `zeta`: Parameter `zeta` passed through to the routine.
+/// - `omega`: Planetary rotation rate.
+/// - `form`: Equation form selector for the high-level tendency routine.
+///
+/// # Returns
+/// A Python object containing the returned NumPy array.
+///
+/// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
 pub fn barotropic_vorticity_rhs<'py>(
     py: Python<'py>,
     ops: PyRef<'py, SphereOps>,
@@ -66,7 +91,9 @@ pub fn barotropic_vorticity_rhs<'py>(
     form: &str,
 ) -> PyResult<Py<PyAny>> {
     if form != "advective" {
-        return Err(PyValueError::new_err("barotropic_vorticity_rhs v1 only supports form='advective'"));
+        return Err(PyValueError::new_err(
+            "barotropic_vorticity_rhs v1 only supports form='advective'",
+        ));
     }
     let zshape = zeta.shape().to_vec();
     let (zeta_spec, nt, was_2d) = ops.scalar_to_spec_vec(zeta.as_slice()?, &zshape, None)?;
@@ -94,6 +121,21 @@ pub fn barotropic_vorticity_rhs<'py>(
 
 #[pyfunction]
 #[pyo3(signature = (ops, h, u, v, g=9.81_f32, omega=7.292115e-5_f32, form="vector_invariant"))]
+/// Compute shallow-water tendencies using the vector-invariant form.
+///
+/// # Parameters
+/// - `ops`: High-level SphereOps spectral operator set used for transforms and differential operators.
+/// - `h`: Fluid layer depth or height field on the operator grid.
+/// - `u`: Zonal or first vector component on the operator grid.
+/// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+/// - `g`: Input scalar grid values stored in `(nlat, nlon[, nt])` order.
+/// - `omega`: Planetary rotation rate.
+/// - `form`: Equation form selector for the high-level tendency routine.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
 pub fn shallow_water_rhs<'py>(
     py: Python<'py>,
     ops: PyRef<'py, SphereOps>,
@@ -105,7 +147,9 @@ pub fn shallow_water_rhs<'py>(
     form: &str,
 ) -> PyResult<(Py<PyAny>, Py<PyAny>, Py<PyAny>)> {
     if form != "vector_invariant" {
-        return Err(PyValueError::new_err("shallow_water_rhs v1 only supports form='vector_invariant'"));
+        return Err(PyValueError::new_err(
+            "shallow_water_rhs v1 only supports form='vector_invariant'",
+        ));
     }
     let shape = h.shape().to_vec();
     let (mut dhdt, nt, was_2d) = ops.flux_div_scalar_vec(
@@ -120,7 +164,8 @@ pub fn shallow_water_rhs<'py>(
         *value = -*value;
     }
 
-    let (zeta, _, _, _) = ops.wind_to_vrtdiv_vec(u.as_slice()?, &u.shape(), v.as_slice()?, &v.shape())?;
+    let (zeta, _, _, _) =
+        ops.wind_to_vrtdiv_vec(u.as_slice()?, &u.shape(), v.as_slice()?, &v.shape())?;
     let f = ops.coriolis_vec(nt, omega);
     let eta = zeta
         .iter()

@@ -41,6 +41,19 @@ fn direct_zw_column(nlat: usize, m: usize) -> Vec<f32> {
     out
 }
 
+/// Initialize the workspace required by `vhaes_impl`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lvhaes`: Declared length of the `wvhaes` workspace.
+/// - `lwork`: Length of the caller-provided work array.
+/// - `ldwork`: Length of the auxiliary workspace expected by the low-level interface.
+///
+/// # Returns
+/// A tuple containing the workspace/result vector and the error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhaesi_impl(nlat: i32, nlon: i32, lvhaes: i32, lwork: i32, ldwork: i32) -> (Vec<f32>, i32) {
     let mut ierror = 1;
     if nlat < 3 {
@@ -121,6 +134,19 @@ pub fn vhaesi_impl(nlat: i32, nlon: i32, lvhaes: i32, lwork: i32, ldwork: i32) -
     (out, 0)
 }
 
+/// Parallel initializer for the workspace required by `vhaes_impl`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lvhaes`: Declared length of the `wvhaes` workspace.
+/// - `lwork`: Length of the caller-provided work array.
+/// - `ldwork`: Length of the auxiliary workspace expected by the low-level interface.
+///
+/// # Returns
+/// A tuple containing the workspace/result vector and the error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhaesi_impl_parallel(
     nlat: i32,
     nlon: i32,
@@ -232,6 +258,17 @@ pub fn vhaesi_impl_parallel(
 }
 
 #[pyfunction]
+/// Python wrapper for `vhaesi_impl` that returns the initialized workspace.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lvhaes`: Declared length of the `wvhaes` workspace.
+/// - `lwork`: Length of the caller-provided work array.
+/// - `ldwork`: Length of the auxiliary workspace expected by the low-level interface.
+///
+/// # Returns
+/// A one-dimensional NumPy workspace array together with a error code.
 pub fn vhaesi<'py>(
     py: Python<'py>,
     nlat: i32,

@@ -50,6 +50,21 @@ fn infer_nlon_from_wshsgc(nlat: usize, ltotal: usize) -> PyResult<usize> {
     ))
 }
 
+/// Core Rust implementation of `vrtgc`.
+///
+/// # Parameters
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vrtgc_impl(
     cr: &[f32],
     ci: &[f32],
@@ -135,6 +150,18 @@ pub fn vrtgc_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `vrtgc`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `wshsgc`: Workspace initialized by `shsgci_impl` for Gaussian-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+/// - `isym`: Symmetry selector used by Legendre tables.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn vrtgc<'py>(
     py: Python<'py>,
     nlon: usize,

@@ -61,6 +61,20 @@ fn gaussian_stored_init_impl(
 }
 
 #[pyfunction]
+/// Build regular-grid stored workspaces for scalar and vector transforms while releasing the GIL.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lshaes`: Declared length of the `wshaes` workspace.
+/// - `lshaes_work`: Requested storage for the scalar regular-grid stored-analysis workspace.
+/// - `lvhaes`: Declared length of the `wvhaes` workspace.
+/// - `lvhaes_work`: Requested storage for the vector regular-grid stored-analysis workspace.
+/// - `ldwork_scalar`: Auxiliary workspace length used by the scalar stored initializer.
+/// - `ldwork_vector`: Auxiliary workspace length used by the vector stored initializer.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn regular_stored_init_nogil<'py>(
     py: Python<'py>,
     nlat: i32,
@@ -106,6 +120,21 @@ pub fn regular_stored_init_nogil<'py>(
 }
 
 #[pyfunction]
+/// Build Gaussian-grid stored workspaces for scalar and vector transforms while releasing the GIL.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `lshags`: Declared length of the `wshags` workspace.
+/// - `lshags_work`: Requested storage for the scalar Gaussian stored-analysis workspace.
+/// - `lshags_dwork`: Auxiliary workspace length for the scalar Gaussian stored initializer.
+/// - `lvhags`: Declared length of the `wvhags` workspace.
+/// - `lvhags_dwork`: Auxiliary workspace length for the Gaussian vector analysis initializer.
+/// - `lvhsgs`: Declared length of the `wvhsgs` workspace.
+/// - `lvhsgs_dwork`: Auxiliary workspace length for the Gaussian vector synthesis initializer.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn gaussian_stored_init_nogil<'py>(
     py: Python<'py>,
     nlat: i32,

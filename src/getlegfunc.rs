@@ -188,6 +188,16 @@ fn lfpt(n: i32, m: i32, theta: f32, cp: &[f32]) -> f32 {
     sum
 }
 
+/// Evaluate normalized associated Legendre basis values for a latitude and triangular truncation.
+///
+/// # Parameters
+/// - `lat`: Latitude in radians.
+/// - `ntrunc`: Triangular spectral truncation.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector in storage.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn getlegfunc_impl(lat: f32, ntrunc: i32) -> Vec<f32> {
     let ntrunc = ntrunc.max(0);
     let ntrunc_usize = to_usize(ntrunc);
@@ -209,6 +219,14 @@ pub fn getlegfunc_impl(lat: f32, ntrunc: i32) -> Vec<f32> {
 }
 
 #[pyfunction]
+/// Python wrapper for `getlegfunc_impl` that returns the Legendre table as a NumPy array.
+///
+/// # Parameters
+/// - `lat`: Latitude in radians.
+/// - `ntrunc`: Triangular spectral truncation.
+///
+/// # Returns
+/// A one-dimensional NumPy array containing the computed workspace.
 pub fn getlegfunc<'py>(
     py: Python<'py>,
     lat: f32,

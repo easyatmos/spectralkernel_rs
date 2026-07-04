@@ -48,6 +48,20 @@ fn infer_nlon_from_wshsec(nlat: usize, ltotal: usize) -> PyResult<usize> {
     ))
 }
 
+/// Core Rust implementation of `igradec`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn igradec_impl(
     br: &[f32],
     bi: &[f32],
@@ -108,6 +122,16 @@ pub fn igradec_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `igradec`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `wshsec`: Workspace initialized by `shseci_impl` for regular-grid scalar synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn igradec<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,

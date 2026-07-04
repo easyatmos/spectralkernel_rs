@@ -42,6 +42,22 @@ fn ityp_from_isym(isym: usize) -> PyResult<usize> {
     }
 }
 
+/// Core Rust implementation of `gradec`.
+///
+/// # Parameters
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `_wvhsec`: Parameter `_wvhsec` passed through to the routine.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn gradec_impl(
     a: &[f32],
     b: &[f32],
@@ -127,6 +143,17 @@ pub fn gradec_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `gradec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn gradec<'py>(
     py: Python<'py>,
     nlon: usize,
@@ -166,6 +193,18 @@ pub fn gradec<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `gradec_isym`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn gradec_isym<'py>(
     py: Python<'py>,
     nlon: usize,

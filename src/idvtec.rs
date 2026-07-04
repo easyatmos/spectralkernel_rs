@@ -42,6 +42,24 @@ fn ityp_from_isym(isym: usize) -> PyResult<usize> {
     }
 }
 
+/// Core Rust implementation of `idvtec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `ad`: Parameter `ad` passed through to the routine.
+/// - `bd`: Parameter `bd` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn idvtec_impl(
     nlon: usize,
     ad: &[f32],
@@ -146,6 +164,19 @@ pub fn idvtec_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `idvtec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `ad`: Parameter `ad` passed through to the routine.
+/// - `bd`: Parameter `bd` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn idvtec<'py>(
     py: Python<'py>,
     nlon: usize,
@@ -160,6 +191,20 @@ pub fn idvtec<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `idvtec_isym`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `ad`: Parameter `ad` passed through to the routine.
+/// - `bd`: Parameter `bd` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Four NumPy arrays together with a error code.
 pub fn idvtec_isym<'py>(
     py: Python<'py>,
     nlon: usize,

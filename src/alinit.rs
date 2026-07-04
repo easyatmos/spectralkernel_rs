@@ -1,5 +1,15 @@
 use crate::sphcom_scalar::{dnlfk, dnlft, rabcp1};
 
+/// Core Rust implementation of `alinit`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn alinit_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let pi = 4.0_f64 * (1.0_f64).atan();
@@ -37,6 +47,16 @@ pub fn alinit_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     walin
 }
 
+/// Core Rust implementation of `ses1`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn ses1_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let mmax = nlat.min(nlon / 2 + 1);
@@ -134,6 +154,17 @@ pub fn ses1_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     p
 }
 
+/// Rust entry point for `alin_column`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+/// - `walin`: Stored scalar analysis workspace produced by `alinit_impl`.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
 pub fn alin_column(nlat: usize, nlon: usize, isym: i32, m: usize, walin: &[f64]) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let lim = nlat * imid;

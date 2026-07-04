@@ -1,6 +1,15 @@
 use numpy::PyArray1;
 use pyo3::prelude::*;
 
+/// Build the trigonometric workspace used by the real Fourier transform routines.
+///
+/// # Parameters
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector in storage.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn hrffti_impl(n: i32) -> Vec<f32> {
     let n_usize = usize::try_from(n.max(0)).unwrap_or(0);
     let mut wsave = vec![0.0_f32; n_usize + 15];
@@ -13,6 +22,13 @@ pub fn hrffti_impl(n: i32) -> Vec<f32> {
 }
 
 #[pyfunction]
+/// Python wrapper for `hrffti_impl` that exposes the FFT workspace as a NumPy array.
+///
+/// # Parameters
+/// - `n`: Total spherical harmonic degree.
+///
+/// # Returns
+/// A one-dimensional NumPy array containing the computed workspace.
 pub fn hrffti<'py>(py: Python<'py>, n: i32) -> PyResult<Bound<'py, PyArray1<f32>>> {
     let wsave = hrffti_impl(n);
     Ok(PyArray1::from_vec(py, wsave))

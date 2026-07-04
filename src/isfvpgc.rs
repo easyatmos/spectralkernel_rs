@@ -64,6 +64,24 @@ fn expand_isfvpgc_output(
     full
 }
 
+/// Core Rust implementation of `isfvpgc`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `as_`: Parameter `as_` passed through to the routine.
+/// - `bs`: Parameter `bs` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn isfvpgc_impl(
     nlon: usize,
     as_: &[f32],
@@ -159,6 +177,19 @@ pub fn isfvpgc_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `isfvpgc`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `as_`: Parameter `as_` passed through to the routine.
+/// - `bs`: Parameter `bs` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn isfvpgc<'py>(
     py: Python<'py>,
     nlon: usize,
@@ -173,6 +204,20 @@ pub fn isfvpgc<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `isfvpgc_isym`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `as_`: Parameter `as_` passed through to the routine.
+/// - `bs`: Parameter `bs` passed through to the routine.
+/// - `av`: Parameter `av` passed through to the routine.
+/// - `bv`: Parameter `bv` passed through to the routine.
+/// - `wvhsgc`: Workspace initialized by `vhsgci_impl` for Gaussian-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn isfvpgc_isym<'py>(
     py: Python<'py>,
     nlon: usize,

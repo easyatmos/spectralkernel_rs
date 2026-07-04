@@ -2,6 +2,16 @@ use crate::zfinit::zfinit_impl;
 use numpy::PyArray1;
 use pyo3::prelude::*;
 
+/// Core Rust implementation of `sea1`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector stored in double precision.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn sea1_impl(nlat: usize, nlon: usize) -> Vec<f64> {
     let imid = (nlat + 1) / 2;
     let mmax = nlat.min(nlon / 2 + 1);
@@ -100,6 +110,14 @@ pub fn sea1_impl(nlat: usize, nlon: usize) -> Vec<f64> {
 }
 
 #[pyfunction]
+/// Python helper that exposes the scalar synthesis workspace built by `sea1_impl` for inspection.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// A Python result containing a one-dimensional NumPy array.
 pub fn sea1_debug<'py>(
     py: Python<'py>,
     nlat: usize,

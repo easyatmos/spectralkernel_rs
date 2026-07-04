@@ -101,6 +101,10 @@ impl TransformBackend {
 }
 
 #[pyclass]
+/// High-level spectral-operator handle that caches workspaces for one spherical grid.
+///
+/// The object owns a SpectralPlan so repeated operations reuse cached
+/// initialization data instead of rebuilding work arrays for every transform.
 pub struct SphereOps {
     pub(crate) plan: SpectralPlan,
 }
@@ -109,6 +113,18 @@ pub struct SphereOps {
 impl SphereOps {
     #[staticmethod]
     #[pyo3(signature = (nlat, nlon, radius=6.3712e6_f32, legfunc="stored"))]
+    /// Create a high-level operator set for an equally spaced global latitude-longitude grid.
+    ///
+    /// # Parameters
+    /// - `nlat`: Number of latitudes in the grid.
+    /// - `nlon`: Number of longitudes in the grid.
+    /// - `radius`: Sphere radius used to scale gradients, Laplacians, and dynamics.
+    /// - `legfunc`: Legendre-function strategy: stored tables or computed recurrences.
+    ///
+    /// # Returns
+    /// A Python result containing the values produced by this routine.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn regular(nlat: usize, nlon: usize, radius: f32, legfunc: &str) -> PyResult<Self> {
         let legfunc = LegFunc::parse(legfunc)?;
         Ok(Self {
@@ -118,6 +134,18 @@ impl SphereOps {
 
     #[staticmethod]
     #[pyo3(signature = (nlat, nlon, radius=6.3712e6_f32, legfunc="stored"))]
+    /// Create a high-level operator set for a Gaussian latitude-longitude grid.
+    ///
+    /// # Parameters
+    /// - `nlat`: Number of latitudes in the grid.
+    /// - `nlon`: Number of longitudes in the grid.
+    /// - `radius`: Sphere radius used to scale gradients, Laplacians, and dynamics.
+    /// - `legfunc`: Legendre-function strategy: stored tables or computed recurrences.
+    ///
+    /// # Returns
+    /// A Python result containing the values produced by this routine.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn gaussian(nlat: usize, nlon: usize, radius: f32, legfunc: &str) -> PyResult<Self> {
         let legfunc = LegFunc::parse(legfunc)?;
         Ok(Self {
@@ -126,38 +154,70 @@ impl SphereOps {
     }
 
     #[getter]
+    /// Return the number of latitude points owned by this operator set.
+    ///
+    /// # Returns
+    /// The computed index, table length, or updated state position returned by the routine.
     pub fn nlat(&self) -> usize {
         self.plan.nlat
     }
 
     #[getter]
+    /// Return the number of longitude points owned by this operator set.
+    ///
+    /// # Returns
+    /// The computed index, table length, or updated state position returned by the routine.
     pub fn nlon(&self) -> usize {
         self.plan.nlon
     }
 
     #[getter]
+    /// Return the sphere radius used when scaling differential operators.
+    ///
+    /// # Returns
+    /// The interpolated or evaluated scalar value.
     pub fn radius(&self) -> f32 {
         self.plan.radius
     }
 
     #[getter]
+    /// Return whether this operator uses a regular or Gaussian grid.
+    ///
+    /// # Returns
+    /// The value produced by this routine.
     pub fn grid_type(&self) -> &'static str {
         self.plan.grid_type.as_str()
     }
 
     #[getter]
+    /// Return whether Legendre functions are stored or computed for this operator.
+    ///
+    /// # Returns
+    /// The value produced by this routine.
     pub fn legfunc(&self) -> &'static str {
         self.plan.legfunc.as_str()
     }
 
+    /// Return latitude coordinates in degrees for the operator grid.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn lat<'py>(&self, py: Python<'py>) -> PyResult<Py<PyAny>> {
         vec_to_py(py, &[self.plan.nlat], self.plan.lat.clone())
     }
 
+    /// Return longitude coordinates in degrees for the operator grid.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn lon<'py>(&self, py: Python<'py>) -> PyResult<Py<PyAny>> {
         vec_to_py(py, &[self.plan.nlon], self.plan.lon.clone())
     }
 
+    /// Return Gaussian quadrature weights, or unit weights for regular grids.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn weights<'py>(&self, py: Python<'py>) -> PyResult<Py<PyAny>> {
         let weights = self
             .plan
@@ -168,6 +228,14 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (sg, ig=0))]
+    /// Shift a scalar field from geographical ordering into mathematical latitude-longitude ordering.
+    ///
+    /// # Parameters
+    /// - `sg`: Parameter `sg` passed through to the routine.
+    /// - `ig`: Parameter `ig` passed through to the routine.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn geo_to_math_scalar<'py>(
         &self,
         py: Python<'py>,
@@ -183,6 +251,14 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (sm, ig=0))]
+    /// Shift a scalar field from mathematical ordering back to geographical ordering.
+    ///
+    /// # Parameters
+    /// - `sm`: Parameter `sm` passed through to the routine.
+    /// - `ig`: Parameter `ig` passed through to the routine.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn math_to_geo_scalar<'py>(
         &self,
         py: Python<'py>,
@@ -198,6 +274,15 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (ug, vg, ig=0))]
+    /// Shift vector components from geographical ordering into mathematical ordering.
+    ///
+    /// # Parameters
+    /// - `ug`: Parameter `ug` passed through to the routine.
+    /// - `vg`: Parameter `vg` passed through to the routine.
+    /// - `ig`: Parameter `ig` passed through to the routine.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn geo_to_math_vector<'py>(
         &self,
         py: Python<'py>,
@@ -219,6 +304,15 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (vm, wm, ig=0))]
+    /// Shift vector components from mathematical ordering back to geographical ordering.
+    ///
+    /// # Parameters
+    /// - `vm`: Parameter `vm` passed through to the routine.
+    /// - `wm`: Parameter `wm` passed through to the routine.
+    /// - `ig`: Parameter `ig` passed through to the routine.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn math_to_geo_vector<'py>(
         &self,
         py: Python<'py>,
@@ -240,6 +334,14 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (data, ioff=0))]
+    /// Apply the half-grid scalar shift between offset and regular grids.
+    ///
+    /// # Parameters
+    /// - `data`: Rank-2 real array analyzed by the internal Fourier kernel.
+    /// - `ioff`: Parameter `ioff` passed through to the routine.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn scalar_shift<'py>(
         &self,
         py: Python<'py>,
@@ -281,6 +383,15 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (u, v, ioff=0))]
+    /// Apply the half-grid vector shift to both vector components.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    /// - `ioff`: Parameter `ioff` passed through to the routine.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn vector_shift<'py>(
         &self,
         py: Python<'py>,
@@ -329,6 +440,15 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (f, truncation=None, backend="rayon"))]
+    /// Analyze grid-space scalar fields into packed complex spherical-harmonic coefficients.
+    ///
+    /// # Parameters
+    /// - `f`: Scalar grid field on the operator grid.
+    /// - `truncation`: Optional triangular spectral truncation to apply.
+    /// - `backend`: Execution backend selector for supported transform paths.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn scalar_to_spec<'py>(
         &self,
         py: Python<'py>,
@@ -355,6 +475,14 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (spec, backend="rayon"))]
+    /// Synthesize grid-space scalar fields from packed complex spherical-harmonic coefficients.
+    ///
+    /// # Parameters
+    /// - `spec`: Packed complex spherical-harmonic coefficient array.
+    /// - `backend`: Execution backend selector for supported transform paths.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn spec_to_scalar<'py>(
         &self,
         py: Python<'py>,
@@ -378,6 +506,16 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (u, v, truncation=None, backend="rayon"))]
+    /// Analyze grid-space vector components into packed vorticity and divergence spectra.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    /// - `truncation`: Optional triangular spectral truncation to apply.
+    /// - `backend`: Execution backend selector for supported transform paths.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn vector_to_spec<'py>(
         &self,
         py: Python<'py>,
@@ -409,6 +547,15 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (vort_spec, div_spec, backend="rayon"))]
+    /// Synthesize grid-space vector components from packed vorticity and divergence spectra.
+    ///
+    /// # Parameters
+    /// - `vort_spec`: Packed vorticity spectral coefficients.
+    /// - `div_spec`: Packed divergence spectral coefficients.
+    /// - `backend`: Execution backend selector for supported transform paths.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn spec_to_vector<'py>(
         &self,
         py: Python<'py>,
@@ -436,6 +583,14 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (f, truncation=None))]
+    /// Apply triangular spectral truncation to a scalar grid field and synthesize it back to grid space.
+    ///
+    /// # Parameters
+    /// - `f`: Scalar grid field on the operator grid.
+    /// - `truncation`: Optional triangular spectral truncation to apply.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn truncate_scalar<'py>(
         &self,
         py: Python<'py>,
@@ -460,6 +615,13 @@ impl SphereOps {
         }
     }
 
+    /// Compute the horizontal gradient of a scalar spectral field.
+    ///
+    /// # Parameters
+    /// - `chispec`: Packed scalar spectral coefficients representing a potential field.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn grad<'py>(
         &self,
         py: Python<'py>,
@@ -468,6 +630,13 @@ impl SphereOps {
         self.gradient_from_spec(py, chispec)
     }
 
+    /// Alias for computing the horizontal gradient of a scalar spectral field.
+    ///
+    /// # Parameters
+    /// - `chispec`: Packed scalar spectral coefficients representing a potential field.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn gradient<'py>(
         &self,
         py: Python<'py>,
@@ -476,6 +645,15 @@ impl SphereOps {
         self.gradient_from_spec(py, chispec)
     }
 
+    /// Analyze a scalar grid field and return its horizontal gradient on the grid.
+    ///
+    /// # Parameters
+    /// - `f`: Scalar grid field on the operator grid.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn gradient_grid<'py>(
         &self,
         py: Python<'py>,
@@ -493,6 +671,13 @@ impl SphereOps {
         Ok((vec_to_py(py, &out_shape, u)?, vec_to_py(py, &out_shape, v)?))
     }
 
+    /// Synthesize the horizontal gradient from packed scalar spectral coefficients.
+    ///
+    /// # Parameters
+    /// - `chispec`: Packed scalar spectral coefficients representing a potential field.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn gradient_from_spec<'py>(
         &self,
         py: Python<'py>,
@@ -512,6 +697,14 @@ impl SphereOps {
         Ok((vec_to_py(py, &out_shape, u)?, vec_to_py(py, &out_shape, v)?))
     }
 
+    /// Recover the scalar potential whose gradient best matches the supplied vector field.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn inverse_grad<'py>(
         &self,
         py: Python<'py>,
@@ -521,6 +714,14 @@ impl SphereOps {
         self.inverse_gradient(py, u, v)
     }
 
+    /// Alias for recovering a scalar potential from vector-gradient components.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn inverse_gradient<'py>(
         &self,
         py: Python<'py>,
@@ -544,6 +745,14 @@ impl SphereOps {
         vec_to_py(py, &out_shape, sf)
     }
 
+    /// Compute horizontal divergence from vector components on the grid.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn div<'py>(
         &self,
         py: Python<'py>,
@@ -553,6 +762,14 @@ impl SphereOps {
         self.divergence(py, u, v)
     }
 
+    /// Alias for computing horizontal divergence from vector components on the grid.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn divergence<'py>(
         &self,
         py: Python<'py>,
@@ -572,6 +789,13 @@ impl SphereOps {
         }
     }
 
+    /// Recover an irrotational vector field from a divergence field.
+    ///
+    /// # Parameters
+    /// - `div`: Parameter `div` passed through to the routine.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn inverse_div<'py>(
         &self,
         py: Python<'py>,
@@ -580,6 +804,13 @@ impl SphereOps {
         self.inverse_divergence(py, div)
     }
 
+    /// Alias for recovering an irrotational vector field from divergence.
+    ///
+    /// # Parameters
+    /// - `div`: Parameter `div` passed through to the routine.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn inverse_divergence<'py>(
         &self,
         py: Python<'py>,
@@ -597,6 +828,14 @@ impl SphereOps {
         Ok((vec_to_py(py, &out_shape, u)?, vec_to_py(py, &out_shape, v)?))
     }
 
+    /// Compute vertical vorticity from vector components on the grid.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn vort<'py>(
         &self,
         py: Python<'py>,
@@ -606,6 +845,14 @@ impl SphereOps {
         self.vorticity(py, u, v)
     }
 
+    /// Alias for computing vertical vorticity from vector components on the grid.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn vorticity<'py>(
         &self,
         py: Python<'py>,
@@ -625,6 +872,13 @@ impl SphereOps {
         }
     }
 
+    /// Recover a non-divergent vector field from a vorticity field.
+    ///
+    /// # Parameters
+    /// - `vort`: Parameter `vort` passed through to the routine.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn inverse_vort<'py>(
         &self,
         py: Python<'py>,
@@ -633,6 +887,13 @@ impl SphereOps {
         self.inverse_vorticity(py, vort)
     }
 
+    /// Alias for recovering a non-divergent vector field from vorticity.
+    ///
+    /// # Parameters
+    /// - `vort`: Parameter `vort` passed through to the routine.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn inverse_vorticity<'py>(
         &self,
         py: Python<'py>,
@@ -649,6 +910,13 @@ impl SphereOps {
         Ok((vec_to_py(py, &out_shape, u)?, vec_to_py(py, &out_shape, v)?))
     }
 
+    /// Apply the scalar spherical Laplacian to a grid-space field.
+    ///
+    /// # Parameters
+    /// - `f`: Scalar grid field on the operator grid.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn laplacian<'py>(
         &self,
         py: Python<'py>,
@@ -665,6 +933,14 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (f, zero_mean=true))]
+    /// Apply the inverse scalar spherical Laplacian to a grid-space field.
+    ///
+    /// # Parameters
+    /// - `f`: Scalar grid field on the operator grid.
+    /// - `zero_mean`: Whether to remove the unresolved mean before inverse-Laplacian reconstruction.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn inverse_laplacian<'py>(
         &self,
         py: Python<'py>,
@@ -682,6 +958,16 @@ impl SphereOps {
         }
     }
 
+    /// Analyze vector wind components into vorticity and divergence grid fields.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn wind_to_vrtdiv<'py>(
         &self,
         py: Python<'py>,
@@ -712,6 +998,16 @@ impl SphereOps {
         ))
     }
 
+    /// Synthesize vector wind components from vorticity and divergence grid fields.
+    ///
+    /// # Parameters
+    /// - `vort`: Parameter `vort` passed through to the routine.
+    /// - `div`: Parameter `div` passed through to the routine.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn vrtdiv_to_wind<'py>(
         &self,
         py: Python<'py>,
@@ -733,6 +1029,14 @@ impl SphereOps {
         Ok((vec_to_py(py, &out_shape, u)?, vec_to_py(py, &out_shape, v)?))
     }
 
+    /// Reconstruct vector components using the vector triangular synthesis path.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn reconstruct_vector_vts<'py>(
         &self,
         py: Python<'py>,
@@ -757,6 +1061,13 @@ impl SphereOps {
         ))
     }
 
+    /// Compute a non-divergent wind field from a streamfunction.
+    ///
+    /// # Parameters
+    /// - `psi`: Parameter `psi` passed through to the routine.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn streamfunction_to_wind<'py>(
         &self,
         py: Python<'py>,
@@ -774,6 +1085,13 @@ impl SphereOps {
         Ok((vec_to_py(py, &out_shape, u)?, vec_to_py(py, &out_shape, v)?))
     }
 
+    /// Compute an irrotational wind field from a velocity potential.
+    ///
+    /// # Parameters
+    /// - `chi`: Parameter `chi` passed through to the routine.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn velocity_potential_to_wind<'py>(
         &self,
         py: Python<'py>,
@@ -791,6 +1109,14 @@ impl SphereOps {
         Ok((vec_to_py(py, &out_shape, u)?, vec_to_py(py, &out_shape, v)?))
     }
 
+    /// Recover streamfunction and velocity potential from vector wind components.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn streamfunction_velocity_potential<'py>(
         &self,
         py: Python<'py>,
@@ -815,6 +1141,16 @@ impl SphereOps {
         ))
     }
 
+    /// Decompose vector wind components into non-divergent and irrotational parts.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// Four NumPy arrays containing the returned coefficient families.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn helmholtz_decompose<'py>(
         &self,
         py: Python<'py>,
@@ -854,6 +1190,13 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (xlmbda=0.0_f32))]
+    /// Solve the scalar Helmholtz equation on the sphere using the spectral plan.
+    ///
+    /// # Parameters
+    /// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+    ///
+    /// # Returns
+    /// A Python result containing the values produced by this routine.
     pub fn helmsph<'py>(&self, py: Python<'py>, xlmbda: f32) -> PyResult<(Py<PyAny>, f32, f32)> {
         let (grid, pertrb, errm, ierr) =
             detach_pyresult(py, || helmsph_impl(self.plan.nlat, self.plan.nlon, xlmbda))?;
@@ -866,12 +1209,28 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (omega=7.292115e-5_f32))]
+    /// Compute the Coriolis parameter on the operator grid.
+    ///
+    /// # Parameters
+    /// - `omega`: Planetary rotation rate.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn coriolis<'py>(&self, py: Python<'py>, omega: f32) -> PyResult<Py<PyAny>> {
         let out = py.detach(|| self.coriolis_vec(1, omega));
         vec_to_py(py, &[self.plan.nlat, self.plan.nlon], out)
     }
 
     #[pyo3(signature = (u, v, omega=7.292115e-5_f32))]
+    /// Add planetary vorticity to relative vorticity computed from vector components.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    /// - `omega`: Planetary rotation rate.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn absolute_vorticity<'py>(
         &self,
         py: Python<'py>,
@@ -902,6 +1261,14 @@ impl SphereOps {
         vec_to_py(py, &out_shape, f)
     }
 
+    /// Compute pointwise kinetic energy from vector components.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn kinetic_energy<'py>(
         &self,
         py: Python<'py>,
@@ -923,6 +1290,14 @@ impl SphereOps {
         vec_to_py(py, &out_shape, out)
     }
 
+    /// Rotate vector components by the vertical unit vector.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn k_cross<'py>(
         &self,
         py: Python<'py>,
@@ -950,6 +1325,15 @@ impl SphereOps {
         ))
     }
 
+    /// Compute horizontal scalar advection by a vector field.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    /// - `q`: Scalar tracer field on the operator grid.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn advect_scalar<'py>(
         &self,
         py: Python<'py>,
@@ -1049,6 +1433,15 @@ impl SphereOps {
         ))
     }
 
+    /// Compute conservative scalar flux divergence.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    /// - `q`: Scalar tracer field on the operator grid.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn flux_div_scalar<'py>(
         &self,
         py: Python<'py>,
@@ -1073,6 +1466,15 @@ impl SphereOps {
         vec_to_py(py, &out_shape, out)
     }
 
+    /// Compute scalar advection with the split advective/conservative form.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    /// - `q`: Scalar tracer field on the operator grid.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
     pub fn split_advect_scalar<'py>(
         &self,
         py: Python<'py>,
@@ -1098,6 +1500,18 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (f, kind="exponential", strength=16.0_f32, order=8))]
+    /// Apply a triangular spectral filter to a scalar grid field.
+    ///
+    /// # Parameters
+    /// - `f`: Scalar grid field on the operator grid.
+    /// - `kind`: Spectral filter family.
+    /// - `strength`: Filter damping strength.
+    /// - `order`: Even differential order used by filters or hyperdiffusion.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn spectral_filter<'py>(
         &self,
         py: Python<'py>,
@@ -1126,6 +1540,18 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (f, order=4, tau=None, nu=None))]
+    /// Apply scalar hyperdiffusion using powers of the spherical Laplacian.
+    ///
+    /// # Parameters
+    /// - `f`: Scalar grid field on the operator grid.
+    /// - `order`: Even differential order used by filters or hyperdiffusion.
+    /// - `tau`: Optional damping time scale for hyperdiffusion.
+    /// - `nu`: Optional explicit diffusion coefficient.
+    ///
+    /// # Returns
+    /// A Python object containing the returned NumPy array.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn hyperdiffusion<'py>(
         &self,
         py: Python<'py>,
@@ -1148,6 +1574,19 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (u, v, order=4, tau=None, nu=None))]
+    /// Apply vector hyperdiffusion to both vector components.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    /// - `order`: Even differential order used by filters or hyperdiffusion.
+    /// - `tau`: Optional damping time scale for hyperdiffusion.
+    /// - `nu`: Optional explicit diffusion coefficient.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn vector_hyperdiffusion<'py>(
         &self,
         py: Python<'py>,
@@ -1175,6 +1614,14 @@ impl SphereOps {
         ))
     }
 
+    /// Apply the vector spherical Laplacian to vector components.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn vector_laplacian<'py>(
         &self,
         py: Python<'py>,
@@ -1199,6 +1646,14 @@ impl SphereOps {
         ))
     }
 
+    /// Apply the inverse vector spherical Laplacian to vector components.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn inverse_vector_laplacian<'py>(
         &self,
         py: Python<'py>,
@@ -1223,6 +1678,14 @@ impl SphereOps {
         ))
     }
 
+    /// Project vector components onto the non-divergent Helmholtz component.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn project_nondivergent<'py>(
         &self,
         py: Python<'py>,
@@ -1254,6 +1717,14 @@ impl SphereOps {
         ))
     }
 
+    /// Project vector components onto the irrotational Helmholtz component.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn project_irrotational<'py>(
         &self,
         py: Python<'py>,
@@ -1285,6 +1756,13 @@ impl SphereOps {
         ))
     }
 
+    /// Compute the gradient rotated by the vertical unit vector.
+    ///
+    /// # Parameters
+    /// - `f`: Scalar grid field on the operator grid.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn rotated_grad<'py>(
         &self,
         py: Python<'py>,
@@ -1310,6 +1788,16 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (u, v, absolute=true, omega=7.292115e-5_f32))]
+    /// Compute the vector-invariant vorticity flux term.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    /// - `absolute`: Whether to include planetary vorticity.
+    /// - `omega`: Planetary rotation rate.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn vorticity_flux<'py>(
         &self,
         py: Python<'py>,
@@ -1336,6 +1824,14 @@ impl SphereOps {
         ))
     }
 
+    /// Compute the gradient of kinetic energy.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
     pub fn kinetic_energy_grad<'py>(
         &self,
         py: Python<'py>,
@@ -1364,6 +1860,17 @@ impl SphereOps {
     }
 
     #[pyo3(signature = (u, v, omega=7.292115e-5_f32))]
+    /// Compute the vector-invariant momentum tendency terms.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    /// - `omega`: Planetary rotation rate.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn momentum_vector_invariant<'py>(
         &self,
         py: Python<'py>,
@@ -1405,6 +1912,18 @@ impl SphereOps {
         ))
     }
 
+    /// Compute vector advection tendencies using the high-level operator API.
+    ///
+    /// # Parameters
+    /// - `u`: Zonal or first vector component on the operator grid.
+    /// - `v`: Input vector component stored in `(nlat, nlon[, nt])` order.
+    /// - `a`: Cosine spectral coefficients in scalar layout.
+    /// - `b`: Sine spectral coefficients in scalar layout.
+    ///
+    /// # Returns
+    /// Two NumPy arrays containing the returned coefficient fields.
+    ///
+    /// This is a high-level Rust/Python-facing convenience API built on top of this crate's lower-level spectral kernels.
     pub fn advect_vector<'py>(
         &self,
         py: Python<'py>,

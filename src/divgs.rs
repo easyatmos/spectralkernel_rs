@@ -33,6 +33,22 @@ fn collect_logical_ab(view: ndarray::ArrayViewD<'_, f32>) -> Vec<f32> {
     }
 }
 
+/// Core Rust implementation of `divgs`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsgs`: Workspace initialized by `shsgsi_impl` for Gaussian-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn divgs_impl(
     nlon: usize,
     br: &[f32],
@@ -124,6 +140,18 @@ pub fn divgs_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `divgs`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `wshsgs`: Workspace initialized by `shsgsi_impl` for Gaussian-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+/// - `isym`: Symmetry selector used by Legendre tables.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn divgs<'py>(
     py: Python<'py>,
     nlon: usize,

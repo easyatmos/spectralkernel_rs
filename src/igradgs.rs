@@ -49,6 +49,20 @@ fn infer_nlon_from_wshsgs(nlat: usize, ltotal: usize) -> PyResult<usize> {
     ))
 }
 
+/// Core Rust implementation of `igradgs`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshsgs`: Workspace initialized by `shsgsi_impl` for Gaussian-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn igradgs_impl(
     br: &[f32],
     bi: &[f32],
@@ -109,6 +123,16 @@ pub fn igradgs_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `igradgs`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `wshsgs`: Workspace initialized by `shsgsi_impl` for Gaussian-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn igradgs<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,

@@ -5,6 +5,18 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
+/// Expand packed triangular spectral coefficients into separate cosine and sine coefficient planes.
+///
+/// # Parameters
+/// - `dataspec`: Packed complex spectral coefficients.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nmdim`: Number of packed spectral coefficients per field.
+/// - `nt`: Number of stacked fields processed together.
+///
+/// # Returns
+/// A Python result containing the cosine and sine coefficient arrays.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn onedtotwod_impl(
     dataspec: &[Complex32],
     nlat: usize,
@@ -50,6 +62,14 @@ pub fn onedtotwod_impl(
 }
 
 #[pyfunction]
+/// Python wrapper for `onedtotwod_impl` that reshapes packed coefficients into NumPy arrays.
+///
+/// # Parameters
+/// - `dataspec`: Packed complex spectral coefficients.
+/// - `nlat`: Number of latitudes in the grid.
+///
+/// # Returns
+/// Two NumPy arrays containing the returned coefficient fields.
 pub fn onedtotwod<'py>(
     py: Python<'py>,
     dataspec: PyReadonlyArrayDyn<'py, Complex32>,

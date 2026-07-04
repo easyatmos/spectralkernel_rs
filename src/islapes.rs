@@ -33,6 +33,23 @@ fn collect_logical_ab(view: ndarray::ArrayViewD<'_, f32>) -> Vec<f32> {
     }
 }
 
+/// Core Rust implementation of `islapes`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshses`: Workspace initialized by `shsesi_impl` for regular-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn islapes_impl(
     nlon: usize,
     xlmbda: &[f32],
@@ -146,6 +163,18 @@ pub fn islapes_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `islapes`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wshses`: Workspace initialized by `shsesi_impl` for regular-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn islapes<'py>(
     py: Python<'py>,
     nlon: usize,
@@ -210,6 +239,19 @@ pub fn islapes<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `islapes_isym`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `xlmbda`: Parameter `xlmbda` passed through to the routine.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wshses`: Workspace initialized by `shsesi_impl` for regular-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn islapes_isym<'py>(
     py: Python<'py>,
     nlon: usize,

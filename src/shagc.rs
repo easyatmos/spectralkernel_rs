@@ -5,6 +5,20 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
+/// Analyze scalar fields on a Gaussian grid using computed Legendre tables.
+///
+/// # Parameters
+/// - `g`: Input scalar grid values stored in `(nlat, nlon[, nt])` order.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshagc`: Workspace initialized by `shagci_impl` for Gaussian-grid scalar analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shagc_impl(
     g: &[f32],
     nlat: usize,
@@ -151,6 +165,20 @@ pub fn shagc_impl(
     Ok((a, b, 0))
 }
 
+/// Parallel implementation of `shagc_impl`.
+///
+/// # Parameters
+/// - `g`: Input scalar grid values stored in `(nlat, nlon[, nt])` order.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshagc`: Workspace initialized by `shagci_impl` for Gaussian-grid scalar analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the cosine coefficients, sine coefficients, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn shagc_impl_parallel(
     g: &[f32],
     nlat: usize,
@@ -298,6 +326,15 @@ pub fn shagc_impl_parallel(
 }
 
 #[pyfunction]
+/// Python wrapper for `shagc_impl` that accepts rank-2 or rank-3 NumPy arrays.
+///
+/// # Parameters
+/// - `g`: Input scalar grid values stored in `(nlat, nlon[, nt])` order.
+/// - `wshagc`: Workspace initialized by `shagci_impl` for Gaussian-grid scalar analysis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// Two NumPy arrays together with a error code.
 pub fn shagc<'py>(
     py: Python<'py>,
     g: PyReadonlyArrayDyn<'py, f32>,

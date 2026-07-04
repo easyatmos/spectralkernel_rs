@@ -5,6 +5,22 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use rayon::prelude::*;
 
+/// Pack two-dimensional vorticity and divergence coefficient arrays into one-dimensional spectra.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `ntrunc`: Triangular spectral truncation.
+/// - `nt`: Number of stacked fields processed together.
+/// - `rsphere`: Sphere radius used to scale Laplacian operators.
+///
+/// # Returns
+/// A Python result containing the transformed complex coefficient arrays.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn twodtooned_vrtdiv_impl(
     br: &[f32],
     bi: &[f32],
@@ -66,6 +82,18 @@ pub fn twodtooned_vrtdiv_impl(
 }
 
 #[pyfunction]
+/// Python wrapper for `twodtooned_vrtdiv_impl` that returns packed NumPy arrays.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `cr`: Third vector coefficient family in vector layout.
+/// - `ci`: Fourth vector coefficient family in vector layout.
+/// - `ntrunc`: Triangular spectral truncation.
+/// - `rsphere`: Sphere radius used to scale Laplacian operators.
+///
+/// # Returns
+/// Two NumPy arrays containing the returned coefficient fields.
 pub fn twodtooned_vrtdiv<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,

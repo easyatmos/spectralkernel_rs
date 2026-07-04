@@ -42,6 +42,22 @@ fn ityp_from_isym(isym: usize) -> PyResult<usize> {
     }
 }
 
+/// Core Rust implementation of `ivrtec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn ivrtec_impl(
     nlon: usize,
     a: &[f32],
@@ -132,6 +148,17 @@ pub fn ivrtec_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `ivrtec`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn ivrtec<'py>(
     py: Python<'py>,
     nlon: usize,
@@ -186,6 +213,18 @@ pub fn ivrtec<'py>(
 }
 
 #[pyfunction]
+/// Rust entry point for `ivrtec_isym`.
+///
+/// # Parameters
+/// - `nlon`: Number of longitudes in the grid.
+/// - `a`: Cosine spectral coefficients in scalar layout.
+/// - `b`: Sine spectral coefficients in scalar layout.
+/// - `isym`: Symmetry selector used by Legendre tables.
+/// - `wvhsec`: Workspace initialized by `vhseci_impl` for regular-grid vector synthesis with computed tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn ivrtec_isym<'py>(
     py: Python<'py>,
     nlon: usize,

@@ -94,6 +94,15 @@ fn tpdp(n: usize, theta: f64, cz: f64, cp: &[f64], dcp: &[f64]) -> (f64, f64) {
     }
 }
 
+/// Compute Gaussian colatitudes and quadrature weights using a Fourier-Newton quadrature method.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+///
+/// # Returns
+/// Gaussian colatitudes, quadrature weights, and an error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn gaqd_impl(nlat: i32) -> (Vec<f64>, Vec<f64>, i32) {
     let nlat_usize = match usize::try_from(nlat) {
         Ok(value) if value > 0 => value,
@@ -196,6 +205,13 @@ pub fn gaqd_impl(nlat: i32) -> (Vec<f64>, Vec<f64>, i32) {
 }
 
 #[pyfunction]
+/// Python wrapper for `gaqd_impl` that returns NumPy arrays for Gaussian colatitudes and weights.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+///
+/// # Returns
+/// Two one-dimensional NumPy arrays together with a error code.
 pub fn gaqd<'py>(
     py: Python<'py>,
     nlat: i32,

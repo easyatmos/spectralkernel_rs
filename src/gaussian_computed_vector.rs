@@ -22,6 +22,17 @@ fn pack_tables(
     out
 }
 
+/// Core Rust implementation of `vbgint`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `theta`: Colatitude in radians.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector in storage.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vbgint_impl(nlat: usize, nlon: usize, theta: &[f64]) -> Vec<f32> {
     let imid = (nlat + 1) / 2;
     let lim = imid * nlat;
@@ -50,6 +61,17 @@ pub fn vbgint_impl(nlat: usize, nlon: usize, theta: &[f64]) -> Vec<f32> {
     pack_tables(&base0, &base1, &a, &b, &c, lim)
 }
 
+/// Core Rust implementation of `wbgint`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `theta`: Colatitude in radians.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector in storage.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn wbgint_impl(nlat: usize, nlon: usize, theta: &[f64]) -> Vec<f32> {
     let imid = (nlat + 1) / 2;
     let lim = imid * nlat;
@@ -80,6 +102,17 @@ pub fn wbgint_impl(nlat: usize, nlon: usize, theta: &[f64]) -> Vec<f32> {
     pack_tables(&base0, &base1, &a, &b, &c, lim)
 }
 
+/// Core Rust implementation of `vtgint`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `theta`: Colatitude in radians.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector in storage.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vtgint_impl(nlat: usize, nlon: usize, theta: &[f64]) -> Vec<f32> {
     let imid = (nlat + 1) / 2;
     let lim = imid * nlat;
@@ -108,6 +141,17 @@ pub fn vtgint_impl(nlat: usize, nlon: usize, theta: &[f64]) -> Vec<f32> {
     pack_tables(&base0, &base1, &a, &b, &c, lim)
 }
 
+/// Core Rust implementation of `wtgint`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+/// - `theta`: Colatitude in radians.
+///
+/// # Returns
+/// A contiguous workspace or coefficient vector in storage.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn wtgint_impl(nlat: usize, nlon: usize, theta: &[f64]) -> Vec<f32> {
     let imid = (nlat + 1) / 2;
     let lim = imid * nlat;
@@ -138,6 +182,16 @@ pub fn wtgint_impl(nlat: usize, nlon: usize, theta: &[f64]) -> Vec<f32> {
     pack_tables(&base0, &base1, &a, &b, &c, lim)
 }
 
+/// Build the core workspace used by `vhagci`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// `Ok` with the workspace vector, or `Err` with a error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhagci_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     let (theta, wts, ierr) = gaqd_impl(nlat as i32);
     if ierr != 0 {
@@ -156,6 +210,16 @@ pub fn vhagci_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     Ok(out)
 }
 
+/// Build the core workspace used by `vhsgci`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// `Ok` with the workspace vector, or `Err` with a error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vhsgci_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     let (theta, _wts, ierr) = gaqd_impl(nlat as i32);
     if ierr != 0 {
@@ -169,6 +233,16 @@ pub fn vhsgci_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     Ok(out)
 }
 
+/// Build the core workspace used by `vtsgci`.
+///
+/// # Parameters
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nlon`: Number of longitudes in the grid.
+///
+/// # Returns
+/// `Ok` with the workspace vector, or `Err` with a error code.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn vtsgci_core(nlat: usize, nlon: usize) -> Result<Vec<f32>, i32> {
     let (theta, _wts, ierr) = gaqd_impl(nlat as i32);
     if ierr != 0 {

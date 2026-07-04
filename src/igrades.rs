@@ -48,6 +48,20 @@ fn infer_nlon_from_wshses(nlat: usize, ltotal: usize) -> PyResult<usize> {
     ))
 }
 
+/// Core Rust implementation of `igrades`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `nlat`: Number of latitudes in the grid.
+/// - `nt`: Number of stacked fields processed together.
+/// - `wshses`: Workspace initialized by `shsesi_impl` for regular-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn igrades_impl(
     br: &[f32],
     bi: &[f32],
@@ -108,6 +122,16 @@ pub fn igrades_impl(
 }
 
 #[pyfunction]
+/// Rust entry point for `igrades`.
+///
+/// # Parameters
+/// - `br`: First vector coefficient family in vector layout.
+/// - `bi`: Second vector coefficient family in vector layout.
+/// - `wshses`: Workspace initialized by `shsesi_impl` for regular-grid scalar synthesis with stored tables.
+/// - `lwork`: Length of the caller-provided work array.
+///
+/// # Returns
+/// A Python result containing the values produced by this routine.
 pub fn igrades<'py>(
     py: Python<'py>,
     br: PyReadonlyArrayDyn<'py, f32>,

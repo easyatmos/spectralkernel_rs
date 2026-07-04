@@ -39,6 +39,15 @@ fn idx(i: usize, j: usize, k: usize, jdp: usize) -> usize {
     ((i - 1) * jdp + (j - 1)) * 5 + (k - 1)
 }
 
+/// Generate the geodesic grid coordinates on the sphere.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+///
+/// # Returns
+/// Three coordinate arrays describing the generated grid.
+///
+/// This routine follows this crate's spectral workspace and coefficient conventions.
 pub fn ihgeod_impl(m: i32) -> (Vec<f32>, Vec<f32>, Vec<f32>) {
     let m = usize::try_from(m.max(1)).unwrap_or(1);
     let idp = m + m - 1;
@@ -153,6 +162,13 @@ pub fn ihgeod_impl(m: i32) -> (Vec<f32>, Vec<f32>, Vec<f32>) {
 }
 
 #[pyfunction]
+/// Python wrapper for `ihgeod_impl` that returns geodesic coordinates as NumPy arrays.
+///
+/// # Parameters
+/// - `m`: Zonal wavenumber or refinement level, depending on the routine.
+///
+/// # Returns
+/// A Python result containing three three-dimensional NumPy arrays.
 pub fn ihgeod<'py>(
     py: Python<'py>,
     m: i32,

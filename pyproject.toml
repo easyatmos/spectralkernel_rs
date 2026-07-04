@@ -1,0 +1,58 @@
+[build-system]
+requires = ["maturin>=1,<2"]
+build-backend = "maturin"
+
+[project]
+name = "spectralkernel_rs"
+license = {file = "LICENSE"}
+description = "The rust kernel of spectral transform"
+authors = [
+    {name = "shenyulu"},
+]
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    "numpy>=1.24",
+    "xarray>=2023.1.0",
+]
+classifiers = [
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Programming Language :: Python :: 3.14',
+    'Programming Language :: Python :: 3 :: Only',
+    'Topic :: Scientific/Engineering',
+    'Operating System :: Microsoft :: Windows',
+    'Operating System :: POSIX',
+    'Operating System :: Unix',
+    "Programming Language :: Rust",
+]
+
+[project.urls]
+homepage = "https://github.com/shenyulu/spectralkernel_rs"
+documentation = "https://github.com/shenyulu/spectralkernel_rs"
+source = "https://github.com/shenyulu/spectralkernel_rs"
+download = "https://pypi.org/project/spectralkernel_rs/#files"
+tracker = "https://github.com/shenyulu/spectralkernel_rs/issues"
+
+[tool.maturin]
+version = { source = "Cargo.toml" }
+python-source = "python"
+module-name = "spectralkernel_rs.spectralkernel_rs"
+
+exclude = [
+  "**/__pycache__/**",
+  "**/*.pyc",
+  ".pytest_cache/**",
+  ".pytest_cache",
+  "**/.pytest_cache/**",
+  "**/.pytest_cache",
+  "pytest-cache-files-*",
+  "pytest-cache-files-*/**",
+  "**/pytest-cache-files-*",
+  "**/pytest-cache-files-*/**",
+]

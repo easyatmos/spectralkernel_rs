@@ -1,0 +1,74 @@
+name: Deploy rustdoc to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build rustdoc
+        env:
+          RUSTDOCFLAGS: --cfg docsrs
+        run: cargo doc --no-deps --document-private-items --target-dir target/rustdoc
+
+      - name: Prepare Pages artifact
+        shell: bash
+        run: |
+          mkdir -p target/rustdoc/doc
+          touch target/rustdoc/doc/.nojekyll
+          cat > target/rustdoc/doc/index.html <<'EOF'
+          <!doctype html>
+          <html lang="en">
+            <head>
+              <meta charset="utf-8">
+              <meta http-equiv="refresh" content="0; url=./windspharm_rust/index.html">
+              <title>Rustdoc</title>
+            </head>
+            <body>
+              <p>Redirecting to <a href="./windspharm_rust/index.html">windspharm_rust documentation</a>...</p>
+            </body>
+          </html>
+          EOF
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: target/rustdoc/doc
+
+  deploy-docs:
+    needs: build-docs
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

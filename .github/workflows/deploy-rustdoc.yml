@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
   workflow_dispatch:
 
 permissions:
@@ -44,17 +45,26 @@ jobs:
           <html lang="en">
             <head>
               <meta charset="utf-8">
-              <meta http-equiv="refresh" content="0; url=./windspharm_rust/index.html">
+              <meta http-equiv="refresh" content="0; url=./spectralkernel_rs/index.html">
               <title>Rustdoc</title>
             </head>
             <body>
-              <p>Redirecting to <a href="./windspharm_rust/index.html">windspharm_rust documentation</a>...</p>
+              <p>Redirecting to <a href="./spectralkernel_rs/index.html">spectralkernel_rs documentation</a>...</p>
             </body>
           </html>
           EOF
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+
+      - name: Inspect Pages artifact
+        shell: bash
+        run: |
+          pwd
+          du -sh target/rustdoc/doc
+          find target/rustdoc/doc -maxdepth 2 -type f | sort | head -100
+          test -f target/rustdoc/doc/index.html
+          test -f target/rustdoc/doc/spectralkernel_rs/index.html
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -64,6 +74,8 @@ jobs:
   deploy-docs:
     needs: build-docs
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

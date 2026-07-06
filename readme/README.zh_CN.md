@@ -1,6 +1,6 @@
-<img src="https://github.com/easyatmos/spectralkernel_rs/blob/main/readme/spherepack_docs_style.png?raw=true" alt="spectralkernel_rs">
+<img src="https://github.com/easyatmos/spectralkernel_rs/blob/main/readme/spherepack_docs_style_cropped.png?raw=true" alt="spectralkernel_rs">
 
-<h2 align="center">spectralkernel_rs：Rust 编写附带 Python 接口的大气谱变换内核</h2>
+<h2 align="center">Rust 编写附带 Python 接口的大气谱变换内核</h2>
 
 <p align="center">
 <a href="https://easyatmos.github.io/spectralkernel_rs/"><strong>文档</strong>（最新版）</a>

@@ -1,6 +1,6 @@
-<img src="https://github.com/easyatmos/spectralkernel_rs/blob/main/readme/spherepack_docs_style.png?raw=true" alt="spectralkernel_rs">
+<img src="https://github.com/easyatmos/spectralkernel_rs/blob/main/readme/spherepack_docs_style_cropped.png?raw=true" alt="spectralkernel_rs">
 
-<h2 align="center">spectralkernel_rs: Rust atmosphere spectral transform kernels with Python bindings</h2>
+<h2 align="center">Rust atmosphere spectral transform kernels with Python bindings</h2>
 
 <p align="center">
 <a href="https://easyatmos.github.io/spectralkernel_rs/"><strong>Documentation</strong> (latest)</a>

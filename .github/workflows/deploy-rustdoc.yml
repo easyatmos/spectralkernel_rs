@@ -57,6 +57,15 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Inspect Pages artifact
+        shell: bash
+        run: |
+          pwd
+          du -sh target/rustdoc/doc
+          find target/rustdoc/doc -maxdepth 2 -type f | sort | head -100
+          test -f target/rustdoc/doc/index.html
+          test -f target/rustdoc/doc/spectralkernel_rs/index.html
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

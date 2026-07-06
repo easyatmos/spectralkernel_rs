@@ -9,3 +9,4 @@ pytest-cache-files-*/
 uv.lock
 /.agents
 **/.pytest_cache
+**/.codebase-memory

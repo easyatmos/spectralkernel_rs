@@ -1,21 +1,18 @@
 [build-system]
-requires = ["maturin>=1,<2"]
-build-backend = "maturin"
+build-backend = 'mesonpy'
+requires = ['meson-python', 'meson >= 1.1.0', 'numpy']
 
 [project]
-name = "spectralkernel_rs"
+name = "spharm_fortran_reference"
+
 license = {file = "LICENSE"}
-description = "The rust kernel of spectral transform"
+
+description = "The fortran reference for spectralkernel_rs"
 authors = [
-    {name = "easyatmos"},
+    {name = "atmos"},
 ]
 requires-python = ">=3.10"
 readme = "README.md"
-dynamic = ["version"]
-dependencies = [
-    "numpy>=1.24",
-    "xarray>=2023.1.0",
-]
 classifiers = [
     'Programming Language :: Python',
     'Programming Language :: Python :: 3',
@@ -29,8 +26,14 @@ classifiers = [
     'Operating System :: Microsoft :: Windows',
     'Operating System :: POSIX',
     'Operating System :: Unix',
-    "Programming Language :: Rust",
 ]
+dependencies = [
+    'numpy >= 1.24.3',
+    'intel-fortran-rt',
+    'dpcpp-cpp-rt',
+    'wrapt'
+]
+dynamic = ["version"]
 
 [project.urls]
 homepage = "https://github.com/easyatmos/spectralkernel_rs"
@@ -39,20 +42,10 @@ source = "https://github.com/easyatmos/spectralkernel_rs"
 download = "https://pypi.org/project/spectralkernel_rs/#files"
 tracker = "https://github.com/easyatmos/spectralkernel_rs/issues"
 
-[tool.maturin]
-version = { source = "Cargo.toml" }
-python-source = "python"
-module-name = "spectralkernel_rs.spectralkernel_rs"
+[tool.setuptools.dynamic]
+version = {attr = "spharm_fortran_reference.__version__"}
 
-exclude = [
-  "**/__pycache__/**",
-  "**/*.pyc",
-  ".pytest_cache/**",
-  ".pytest_cache",
-  "**/.pytest_cache/**",
-  "**/.pytest_cache",
-  "pytest-cache-files-*",
-  "pytest-cache-files-*/**",
-  "**/pytest-cache-files-*",
-  "**/pytest-cache-files-*/**",
-]
+[tool.setuptools_scm]
+
+[tool.setuptools.packages.find]
+where = ["./"]

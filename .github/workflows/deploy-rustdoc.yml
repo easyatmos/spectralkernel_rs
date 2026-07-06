@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
   workflow_dispatch:
 
 permissions:
@@ -44,17 +45,19 @@ jobs:
           <html lang="en">
             <head>
               <meta charset="utf-8">
-              <meta http-equiv="refresh" content="0; url=./windspharm_rust/index.html">
+              <meta http-equiv="refresh" content="0; url=./spectralkernel_rs/index.html">
               <title>Rustdoc</title>
             </head>
             <body>
-              <p>Redirecting to <a href="./windspharm_rust/index.html">windspharm_rust documentation</a>...</p>
+              <p>Redirecting to <a href="./spectralkernel_rs/index.html">spectralkernel_rs documentation</a>...</p>
             </body>
           </html>
           EOF
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

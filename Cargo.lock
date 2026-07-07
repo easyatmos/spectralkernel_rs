@@ -562,7 +562,7 @@ dependencies = [
 
 [[package]]
 name = "spectralkernel_rs"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "criterion",
  "ndarray",

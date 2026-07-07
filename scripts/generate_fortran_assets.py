@@ -139,7 +139,7 @@ def constants() -> tuple[np.float32, ...]:
 
 def build_dataset() -> xr.Dataset:
     nlat, nlon, nt = 5, 8, 2
-    ds = xr.Dataset(attrs={"source": "easyclimate_backend.pyspharm._spherepack", "nlat": nlat, "nlon": nlon, "nt": nt})
+    ds = xr.Dataset(attrs={"source": "spharm_fortran_reference.pyspharm._spherepack", "nlat": nlat, "nlon": nlon, "nt": nt})
 
     lshaec, ldwork = calc_shaec_sizes(nlat, nlon)
     wshaec, ierr = fort_sp.shaeci(nlat, nlon, lshaec, ldwork)

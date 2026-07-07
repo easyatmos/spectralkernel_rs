@@ -1,4 +1,6 @@
-<img src="https://github.com/easyatmos/spectralkernel_rs/blob/main/readme/spherepack_docs_style_cropped.png?raw=true" alt="spectralkernel_rs">
+<p align="center">
+  <img src="https://github.com/easyatmos/spectralkernel_rs/blob/main/readme/spherepack_docs_style_cropped.png?raw=true" alt="spectralkernel_rs" width="200">
+</p>
 
 <h2 align="center">Rust 编写附带 Python 接口的大气谱变换内核</h2>
 
@@ -65,7 +67,7 @@ print(grad_u.shape, grad_v.shape, recovered.shape)
 
 ## 构建说明
 
-## 依赖要求
+### 依赖要求
 
 - Python >= 3.10
 - NumPy >= 1.24

@@ -1,4 +1,6 @@
-<img src="https://github.com/easyatmos/spectralkernel_rs/blob/main/readme/spherepack_docs_style_cropped.png?raw=true" alt="spectralkernel_rs">
+<p align="center">
+  <img src="https://github.com/easyatmos/spectralkernel_rs/blob/main/readme/spherepack_docs_style_cropped.png?raw=true" alt="spectralkernel_rs" width="200">
+</p>
 
 <h2 align="center">Python バインディング付き Rust 製大気スペクトル変換カーネル</h2>
 

@@ -1,7 +1,6 @@
 import numpy as np
-from easyclimate_backend.pyspharm._spherepack import shsesi
-from windspharm_rust.spectralkernel_rs import (
-    shsesi as shsesi_rs)
+from spharm_fortran_reference.pyspharm._spherepack import shsesi
+from spectralkernel_rs import shsesi as shsesi_rs
 
 def summarize_diff(name, a, b):
     a = np.asarray(a)

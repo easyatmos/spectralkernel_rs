@@ -1,6 +1,6 @@
 [package]
 name = "spectralkernel_rs"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 description = "Rust atmosphere spectral transform kernels with Python bindings"
 license-file = "LICENSE"

@@ -67,7 +67,7 @@ print(grad_u.shape, grad_v.shape, recovered.shape)
 
 ## 构建说明
 
-## 依赖要求
+### 依赖要求
 
 - Python >= 3.10
 - NumPy >= 1.24

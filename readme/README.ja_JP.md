@@ -67,7 +67,7 @@ print(grad_u.shape, grad_v.shape, recovered.shape)
 
 ## ビルド手順
 
-## 要件
+### 要件
 
 - Python >= 3.10
 - NumPy >= 1.24

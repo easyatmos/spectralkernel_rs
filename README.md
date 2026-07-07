@@ -71,7 +71,7 @@ print(grad_u.shape, grad_v.shape, recovered.shape)
 
 ## Build instructions
 
-## Requirements
+### Requirements
 
 - Python >= 3.10
 - NumPy >= 1.24
